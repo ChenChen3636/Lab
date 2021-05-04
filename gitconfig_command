@@ -1,0 +1,10 @@
+git config --global user.name ""
+git config --global user.email ""
+git config --global color.ui true
+git config --global core.editor vim
+git config --global alias.co "commit"
+git config --global alias.lg "log --color --graph --all --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --"
+git config --global alias.st "status"
+git config --global alias.ch "checkout"
+git config --global alias.br "branch"
+git config --global alias.lgst "log --color --graph --stat"

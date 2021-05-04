@@ -1,0 +1,46 @@
+        .logout {
+            float: right;
+            height: 30px;
+            line-height: 1px;
+        }
+
+        .navbar {
+            background-color: #B0DE6B;
+            color: #fff;
+            height: 40px;
+            line-height: 10px;
+            padding: 0px;
+
+        }
+
+        .active {
+            color: darkslategrey;
+        }
+
+        .logo {
+            width: 30px;
+            height: 30px;
+        }
+
+        .searchbar {}
+
+        .toolbar {
+            height: 25px;
+        }
+
+        .tool {
+            height: 25px;
+            line-height: 20px;
+
+        }
+
+        a {
+            color: #fff
+        }
+
+        .search {
+            float: right;
+        }
+        .select{
+            color: black;
+        }

@@ -1,0 +1,220 @@
+<?php
+header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
+header("Cache-Control: post-check=0, pre-check=0", false);
+header("Pragma: no-cache");
+?>
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="Pragma" Content="no-cache" />
+    <meta http-equiv="Expires" Content="0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+</head>
+<body>  
+  <div  style="border:10px rgba(255,255,255,0) solid; ">
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          <p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">SET condition</a></p>
+        </div>
+
+        <div class="col" style="text-align:right;">
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="MAC topology" data-html="true" data-content="Node: mac address<br>Link: number of connection">
+            <img src="./img/graphic_information.png" alt="information"></img>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+
+
+
+    <div class="collapse" id="set_condition">
+      <div class="card card-body">
+
+        <form action="./graph_driver/dataFilter_mac.php" method="GET">
+          <div class="form-group">
+            <label for="data_time_range">Time range</label><br>
+            <input type="text" class="form-control" name="daterange_mac"  value="<?php echo $_GET["lastDate"]?>">
+          </div>
+
+          <table>
+            <tr>
+              <td><button type="submit" class="btn btn-primary btn" id="submit_graph">Submit</button></td>
+              <td>&nbsp;</td>
+              <td><div id="loader" style="display:none;">data processing...<image id="graph_loading" src="./img/loading.gif"></image></div></td>
+            </tr>
+          </table>
+
+        </form>
+
+      </div>
+    </div>
+   
+  </div>
+</body>
+</html>
+
+<script>
+
+  $('#submit_graph').click(function () {
+    var loading_gif= document.getElementById('loader');
+    loading_gif.removeAttribute('style');
+  })
+  
+  $(function() {
+    $('input[name="daterange_mac"]').daterangepicker({
+      opens: "left",
+      timePicker: true,
+      timePicker24Hour: true,
+      linkedCalendars: false,
+      autoUpdateInput: true,
+      locale: {
+        format: "YYYY-MM-DD HH:mm",
+        separator: " ~ ",
+        applyLabel: "select",
+        resetLabel: "reset",
+      }
+    }, function(start, end, label) {
+      console.log(this.startDate.format(this.locale.format));
+      console.log(this.endDate.format(this.locale.format));
+    });
+  });
+
+  $(document).ready(function(){
+    $('[data-toggle="popover"]').popover();   
+  });
+</script>
+
+
+<!-- graphic -->
+<style>
+
+.links line {
+  stroke: #999;
+  stroke-opacity: 0.4;
+}
+
+.nodes circle {
+  stroke: #fff;
+  stroke-width: 1.5px;
+}
+
+text {
+  font-family: sans-serif;
+  font-size: 12px;
+}
+
+</style>
+<svg width="2480" height="1980"></svg>    <!-- width="960" height="600" -->
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script>
+
+var svg = d3.select("svg"),
+    width = +svg.attr("width"),
+    height = +svg.attr("height");
+
+var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+var simulation = d3.forceSimulation()
+    .force("link", d3.forceLink().id(function(d) { return d.mac_addr; }))
+    .force("charge", d3.forceManyBody().strength(-30))
+    .force("collision", d3.forceCollide().radius(d => 32))
+    .force("center", d3.forceCenter(width / 2, height / 2));
+
+d3.json("./graph_driver/data/d3js_macAB.json", function(error, graph) {
+  if (error) throw error;
+
+  var link = svg.append("g")
+      .attr("class", "links")
+    .selectAll("line")
+    .data(graph.links)
+    .enter().append("line")
+      .attr("stroke-width", function(d) { return Math.sqrt(d.con_num); });
+
+  var node = svg.append("g")
+      .attr("class", "nodes")
+    .selectAll("g")
+    .data(graph.nodes)
+    .enter().append("g")
+ 
+  //node info
+  var circles = node.append("circle")
+      .attr("r", function(d) {       //node size
+        if(d.group == 1){
+          return 7;
+        }else{
+          return 7+Math.pow(d.src_link_num, 1/3)+Math.pow(d.des_link_num, 1/3);
+        }
+      })
+      .attr("fill", function(d) {  return "#66B3FF"; })     //group node color
+      .call(d3.drag()     //node?��?
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+  var lables = node.append("text")
+      .text(function(d) {
+        return d.mac_addr;
+      })
+      .attr('x', 6)
+      .attr('y', 3);
+      //.call(d3.drag()     //text?��?
+          //.on("start", dragstarted)
+          //.on("drag", dragged)
+          //.on("end", dragended));
+
+  node.append("title")
+      .text(function(d) { return d.mac_addr; });
+
+  simulation
+      .nodes(graph.nodes)
+      .on("tick", ticked);
+
+  simulation.force("link")
+      .links(graph.links);
+
+  function ticked() {
+    link
+        .attr("x1", function(d) { return d.source.x; })
+        .attr("y1", function(d) { return d.source.y; })
+        .attr("x2", function(d) { return d.target.x; })
+        .attr("y2", function(d) { return d.target.y; });
+
+    node
+        .attr("transform", function(d) {
+          return "translate(" + d.x + "," + d.y + ")";
+        })
+  }
+});
+
+function dragstarted(d) {
+  if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x;
+  d.fy = d.y;
+}
+
+function dragged(d) {
+  d.fx = d3.event.x;
+  d.fy = d3.event.y;
+}
+
+function dragended(d) {
+  if (!d3.event.active) simulation.alphaTarget(0);
+  d.fx = null;
+  d.fy = null;
+}
+
+</script>

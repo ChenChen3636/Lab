@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <head>
+    <link rel="icon" href="./icon/ball.ico">
     <title>help</title>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -31,7 +32,7 @@
         .logo{
             width: 30px;
             height: 30px;
-            
+
         }
         a{
             color:#fff
@@ -45,9 +46,9 @@
                 <div class="row">
                     <div class="col-md-8">
                         <nav class="nav">
-                            <a  href="flashball.php"> <img src="ball.png" alt="home" class="logo"></a>
+                            <a  href="flashball.php"> <img src="./icon/ball2.png" alt="home" class="logo"></a>
                             <a class="nav-link" href="flashball.php">Session</a>
-                            <a class="nav-link" href="graph.php">Graph</a>
+                            <a class="nav-link" href="./graph_page/index.html">Graph</a>
                             <a class="nav-link active" href="help.php">Help</a>
                         </nav>
                     </div>
@@ -62,6 +63,6 @@
     <div>
         <h3>嘿 BallBall</h3>
     </div>
-    
+
 </body>
 </html>

@@ -1,10 +1,14 @@
 <?php
-require_once __DIR__ . "/session.php";
+// ini_set('display_errors','1');
+// error_reporting(E_ALL);
+session_start();
+require_once './session.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <link rel="icon" href="./icon/ball.ico">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,6 +19,7 @@ require_once __DIR__ . "/session.php";
     <!-- jQuery and JS bundle w/ Popper.js -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <!-- time -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
@@ -25,51 +30,18 @@ require_once __DIR__ . "/session.php";
     <!-- 引入 ECharts 文件 -->
     <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
 
+    <link rel="stylesheet" href="./css/flash.css">
     <title>flashball</title>
 
     <style>
-        .logout {
-            float: right;
-            height: 30px;
-            line-height: 1px;
+        #test{
+            height: 100px;
+            width: 100%;
         }
-
-        .navbar {
-            background-color: #B0DE6B;
-            color: #fff;
-            height: 40px;
-            line-height: 10px;
-            padding: 0px;
-
-        }
-
-        .active {
-            color: darkslategrey;
-        }
-
-        .logo {
-            width: 30px;
-            height: 30px;
-        }
-
-        .searchbar {}
-
-        .toolbar {
-            height: 25px;
-        }
-
-        .tool {
-            height: 25px;
-            line-height: 20px;
-
-        }
-
-        a {
-            color: #fff
-        }
-
-        .search {
-            float: right;
+        iframe{
+            width: 100%;
+            overflow: auto;
+            height: calc(100vh - 276px);
         }
     </style>
 
@@ -78,219 +50,54 @@ require_once __DIR__ . "/session.php";
 <body>
 
     <div class="container-fluid">
-        <div style="position: fixed; z-index:2; width:98%;">
+        <div style="position: fixed; z-index:2; width:99%;">
             <div class="row">
                 <div class="col-md-12">
                     <div class="row navbar">
                         <div class="col-md-8">
                             <nav class="nav">
-                                <a href="flashball.php"> <img src="ball.png" alt="home" class="logo"></a>
+                                <a href="flashball.php"> <img src="./icon/ball.png" alt="home" class="logo"></a>
                                 <a class="nav-link active" href="#">Session</a>
-                                <a class="nav-link" href="graph.php">Graph</a>
+                                <a class="nav-link" href="./graph_page/index.html">Graph</a>
                                 <a class="nav-link" href="help.php">Help</a>
                             </nav>
                         </div>
                         <div class="col-md-4">
                             <button type="button" class="btn btn-outline-light logout" onclick="location.href='logout.php'">logout</button>
-
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row" style="background-color:cornsilk;">
-                <div class="col-md-2">
-                    <img src="play.png" alt="start" class="toolbar">
-                    <img src="stop.png" alt="stop" class="toolbar">
+            <div class="row" style="background-color:cornsilk; box-shadow: 0px 11px 8px -8px #CCC, 0px -11px 8px -10px #CCC;">
+                <div class="col-md-4">
+                    <img src="./icon/play.png" alt="start" class="toolbar">
+                    <img src="./icon/stop.png" alt="stop" class="toolbar">
+                    <a  href="process_connection.php"  target="main_iframe" class="select">connection</a>
+                    <label  for="">|</label>
+                    <a  href="process_packet.php" target="main_iframe" class="select">packet</a>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-4 align-self-center" style="display:flex;justify-content:center;align-items:center;">
                     <!--選擇時間範圍-->
-                    <div id="reportrange" style="background: #fff; cursor: pointer; padding; width: 330px;height:26px; margin:2px auto; text-align:center">
-                        <i class="fa fa-calendar"></i>
-                        <span></span> <i class="fa fa-caret-down"></i>
-                    </div>
-
-                    <script type="text/javascript">
-                        $(function() {
-
-                            var start = moment().subtract(29, 'days');
-                            var end = moment();
-
-                            function cb(start, end) {
-                                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-                            }
-
-                            $('#reportrange').daterangepicker({
-                                startDate: start,
-                                endDate: end,
-                                ranges: {
-                                    'Today': [moment(), moment()],
-                                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                                }
-                            }, cb);
-
-                            cb(start, end);
-
-                        });
-                    </script>
+                    <input id="reportrange" type="text" style="background: #fff; cursor: pointer; text-align:center;width: 300px; border:0px">
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-4">
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-light logo search" data-toggle="modal" data-target="#exampleModalCenter" style="padding:0px;background-color:transparent;border-color:transparent">
+                    <button type="button" class="btn btn-light logo search" data-toggle="modal" data-target="#exampleModalCenter" style="padding:0px;  background-color:transparent;border-color:transparent">
                         <div style="background-color: transparent;">
-                            <img src="loupe.png" alt="search" class="toolbar">
+                            <img src="./icon/loupe.png" alt="search" class="toolbar">
                         </div>
                     </button>
-
-
                 </div>
             </div>
         </div>
 
-
+        <!-- 圖表背景 -->
         <div style="padding-top:70px ;">
-            <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-            <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue "></div>
-            <script>
-                // 基于准备好的dom，初始化echarts实例
-                var myChart = echarts.init(document.getElementById('main'));
-
-                // 指定图表的配置项和数据
-                var option = {
-                    legend: {},
-                    tooltip: {},
-                    dataset: {
-                        dimensions: ['product', '2015', '2016', '2017'],
-                        source: [{
-                                product: 'packet',
-                                '2015': 43.3,
-                                '2016': 85.8,
-                                '2017': 93.7
-                            },
-                            {
-                                product: 'network',
-                                '2015': 83.1,
-                                '2016': 73.4,
-                                '2017': 55.1
-                            },
-                            {
-                                product: 'frame',
-                                '2015': 86.4,
-                                '2016': 65.2,
-                                '2017': 82.5
-                            },
-                            {
-                                product: 'TCP',
-                                '2015': 72.4,
-                                '2016': 53.9,
-                                '2017': 39.1
-                            }
-                        ]
-                    },
-                    xAxis: {
-                        type: 'category'
-                    },
-                    yAxis: {},
-                    // Declare several bar series, each will be mapped
-                    // to a column of dataset.source by default.
-                    series: [{
-                            type: 'bar'
-                        },
-                        {
-                            type: 'bar'
-                        },
-                        {
-                            type: 'bar'
-                        }
-                    ]
-                };
-
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
-            </script>
-
-            <div>
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">NO.</th>
-                            <th scope="col">Type</th>
-                            <th scope="col">Start Time</th>
-                            <th scope="col">Stop Time</th>
-                            <th scope="col">Source IP</th>
-                            <th scope="col">Source Port</th>
-                            <th scope="col">Destination IP</th>
-                            <th scope="col">Packet</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // require_once __DIR__ . '/vendor/autoload.php';
-
-                        // $collection = (new MongoDB\Client)->cgudb->connection_collection;
-                        // $document = $collection->find();
-
-                        // foreach($document as $index){
-                        //     $str ='<tr>
-                        //     <td>'.$document['_id'].'</td>
-                        //     <td>'.$document['Connection_Type'].'</td>
-                        //     <td>'.$document['time'].'</td>
-                        //     <td>'.$document['time'].'</td>
-                        //     <td>'.$document['Source_IP'].'</td>
-                        //     <td>'.$document['Source_Port'].'</td>
-                        //     <td>'.$document['Destination_IP'].'</td>
-                        //     <td>'.$document['A2Bpacket'].'</td>
-                        //     </tr>';
-
-                        //     echo $str;
-                        // }   
-                        ?>
-                        <?php
-                        // require_once __DIR__ . '/vendor/autoload.php';
-
-                        // $collection = (new MongoDB\Client)->cgudb->connection_collection;
-                        // $document = $collection->find();
-                        // foreach ($document as $index => $row) {
-                        //     $str = '<tr>
-                        //              <td>' . $index . '</td>
-                        //              <td>' . $row['Connection_Type'] . '</td>
-                        //              <td>' . $row['time'] . '</td>
-                        //              <td>' . $row['time'] . '</td>
-                        //              <td>' . $row['Source_IP'] . '</td>
-                        //              <td>' . $row['Source_Port'] . '</td>
-                        //              <td>' . $row['Destination_IP'] . '</td>
-                        //              <td>' . $row['A2Bpacket'] . '</td>
-                        //              </tr>';
-
-                        //     echo $str;
-                            //var_dump($row['Connection_Type']);
-                        // }
-
-
-
-                        ?>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="row">
-                <div class="col-md-12">
-                    <table class="table table-hover table-sm">
-                        <thead>
-
-                        </thead>
-                        <tbody id="tbody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
-    </div>
-</body>
-
+        <!-- 主頁iframe -->
+        <iframe name="main_iframe" id="main_iframe" src="process_connection.php"  frameborder="0"></iframe>
+    </body>
 </html>
 
 
@@ -305,47 +112,179 @@ require_once __DIR__ . "/session.php";
                 </button>
             </div>
             <div class="modal-body">
-                <div>
-                    <label for="IP">IPv4:</label>
-                    <input type="text" name="IP" placeholder="163.25.50.20">
-                </div>
-                <div>
-                    <label for="Port">Port:</label>
-                    <input type="text" name="Port" placeholder="22">
-                </div>
-                <div>
-
-                    <input type="checkbox" name="TCP">
-                    <label for="TCP">TCP</label>
-                    <input type="checkbox" name="UDP">
-                    <label for="UDP">UDP</label>
-                </div>
+                <input type="radio" value="connection" id="conn_box" name="pick" checked>
+                <label for="conn_box">connection</label>
+                <input type="radio" value="packet" id="pkt_box" name="pick">
+                <label for="pkt_box">packet</label>
+                <br>
+                <label for="protocol">protocol: </label>
+                <input type="text" name="Protocol" id="Connection_Type" placeholder="Protocol">
+                <br>
+                <label for="srcIP">IP:</label>
+                <input type="text" name="Third_Layer-Source_IP" id="Source_IP" placeholder="Src IP">
+                <input type="text" name="Third_Layer-Destination_IP" id="Destination_IP" placeholder="Dst IP">
+                <br>
+                <label for="srcPort">Port: </label>
+                <input type="text" name="Fourth_Layer-Source_Port" id="Source_Port" placeholder="Src Port">
+                <input type="text" name="Fourth_Layer-Destination_Port" id="Destination_Port" placeholder="Dst Port">
+                <!-- <br>
+                <label for="srcMac">Mac: </label>
+                <input type="text" name="srcMac" id="Source_Mac" placeholder="Src Mac">
+                <input type="text" name="dstMac" id="Destination_Mac" placeholder="Dst Mac">
+                <br>
+                <label for="connID">ID: </label>
+                <input type="text" name="connID" id="connID" placeholder="connection ID">
+                <input type="text" name="pktID" id="pktID" placeholder="packet ID"> -->
             </div>
-
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="btn_search" class="btn btn-secondary" data-dismiss="modal">search</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="spinner-border" role="status">
-  <span class="sr-only">Loading...</span>
-</div>
 
 <script>
+var start = moment().startOf('day').unix();
+var end = moment().unix();
+
+function chart(start, end){
     $.ajax({
         type: 'POST',
-        url: 'index.html',
+        url: 'echartTest.php',
         data: {
-            name: 'name',
-            password: 'password'
+            start:start,
+            end: end
         },
+        dataType: "json",
         success: function(msg) {
-            console.log(msg["password"]);
+            console.log(Object.keys(msg));
+            console.log(Object.values(msg));
+
+            var myChart = echarts.init(document.getElementById('main'));
+            var date = Object.keys(msg);
+            var data = Object.values(msg);
+
+            for(var i=0;i<date.length;i++){
+                var singleDate = date[i].split("_");
+                date[i] = singleDate[0]+"-"+singleDate[1]+"-"+singleDate[2]+" "+singleDate[3]+":"+singleDate[4];
+            }
+
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    position: function (pt) {
+                        return [pt[0], '10%'];
+                    }
+                },
+                title: {
+                    y: 10,
+                    left: 'center',
+                    text: '連線數量趨勢圖',
+                    textStyle:{
+                        fontSize:15,
+                        fontFamily:"MingLiU",
+                    }
+                },
+                toolbox: {
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: date
+                },
+                yAxis: {
+                    type: 'value',
+                    boundaryGap: [0, '0%']
+                },
+                series: [
+                    {
+                        name: '連線量',
+                        type: 'line',
+                        symbol: 'none',
+                        sampling: 'lttb',
+                        itemStyle: {
+                            color: 'rgb(255, 70, 131)'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: 'rgb(255, 158, 68)'
+                            }, {
+                                offset: 1,
+                                color: 'rgb(255, 70, 131)'
+                            }])
+                        },
+                        data: data
+                    }
+                ]
+            };
+
+            // 使用刚指定的配置项和数据显示图表。
+            myChart.setOption(option);
         }
     });
-    $name = $_POST["name"];
-    console.log($name);
+}
+
+$(function() {
+    chart(start, end);
+
+
+    $('#reportrange').daterangepicker({
+        startDate: moment().startOf('isoWeek'),
+        endDate: moment(),
+        showDropdowns: true,
+        timePicker24Hour: true,
+        ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        },
+        locale: {
+           format: 'YYYY-MM-DD HH:mm'
+        }
+    });
+
+    $('#reportrange').on('apply.daterangepicker',function(ev, picker) {
+        start = Date.parse(picker.startDate.format('YYYY-MM-DD HH:mm'))/1000;
+        end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm'))/1000;
+
+        chart(start, end);
+    });
+});
+
+    $("#btn_search").on("click",function(){
+
+        var type = $("input[name=pick]:checked").val();
+        var a = "process_connection.php?type=connection&";
+        var b = "process_packet.php?type=packet&";
+        if(type == "connection"){
+            $(this).parent().prev().children("input").each(function(){
+                if($(this).val() != ""){
+                    //alert($(this).attr("id")+":"+$(this).val());
+                    a += $(this).attr('id') +'='+ $(this).val() +'&';
+                }
+            })
+            console.log(a);
+          $("#main_iframe").attr("src",a);
+
+        }else if(type == "packet"){
+            $(this).parent().prev().children("input").each(function(){
+                if($(this).val() != ""){
+                    b += $(this).attr("name") +"="+ $(this).val() +"&";
+                }
+            })
+            console.log(b);
+          $("#main_iframe").attr("src",b);
+        }
+
+    });
+
+
 </script>
