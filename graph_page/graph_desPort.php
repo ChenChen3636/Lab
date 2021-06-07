@@ -43,8 +43,38 @@ header("Pragma: no-cache");
 
         <form action="./graph_driver/dataFilter_desPort.php" method="GET">
           <div class="form-group">
-            <label for="data_time_range">Time range</label><br>
+            <h5><label for="data_time_range">Time range</label><br></h5>
             <input type="text" class="form-control" name="daterange_desPort"  value="<?php echo $_GET["lastDate"]?>" >
+          </div>
+
+
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <h5><label>Maximum number of nodes display</label></h5>
+                <label for="Max_num_des">Destination of port</label>
+                <input type="text" class="form-control" name="Max_num_des"  value = 100 required>
+              </div>
+              <div class="col">
+                <h5><label>Percentage of label to display</label></h5>
+                <label for="Percentage_label_display">Destination of port</label>
+                <input type="range" class="form-control-range" id="per_lab_show_des" name="per_lab_show_des" min="0" max="100" value = 30 oninput="document.getElementById('rangeval_des').innerText = document.getElementById('per_lab_show_des').value+'%'">
+                <h5><span style="color:black; font-weight:bold;" id="rangeval_des">30%</span></h5>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <label for="Max_num_Max_num_srcipnodes">Source ip of each port</label>
+                <input type="text" class="form-control" name="Max_num_srcip"  value = 10 required>
+              </div>
+              <div class="col">
+                <label for="Percentage_label_display">Source ip of each port</label>
+                <input type="range" class="form-control-range" id="per_lab_show_srcip" name="per_lab_show_srcip" min="0" max="100" value = 50 oninput="document.getElementById('rangeval_srcip').innerText = document.getElementById('per_lab_show_srcip').value+'%'">
+                <h5><span style="color:black; font-weight:bold;" id="rangeval_srcip">50%</span></h5>
+              </div>
+            </div>
+
           </div>
 
           <div class="form-group">
@@ -126,7 +156,7 @@ text {
 }
 
 </style>
-<svg width="1500" height="1280"></svg>    <!-- width="960" height="600" -->
+<svg width="1500" height="1080"></svg>    <!-- width="960" height="600" -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -142,7 +172,7 @@ var simulation = d3.forceSimulation()
     .force("collision", d3.forceCollide().radius(d => 30))
     .force("center", d3.forceCenter(width / 2, height / 2));
 
-d3.json("./graph_driver/data/d3js_desPort.json", function(error, graph) {
+d3.json("./graph_driver/data/d3js_desPort_updata.json", function(error, graph) {
   if (error) throw error;
 
   var link = svg.append("g")
@@ -157,6 +187,7 @@ d3.json("./graph_driver/data/d3js_desPort.json", function(error, graph) {
     .selectAll("g")
     .data(graph.nodes)
     .enter().append("g")
+    
  
   //node info
   var circles = node.append("circle")
@@ -180,7 +211,11 @@ d3.json("./graph_driver/data/d3js_desPort.json", function(error, graph) {
           .on("end", dragended));
 
   var lables = node.append("text")
-      .text(function(d) {return d.node_attr;})
+      .text(function(d) {
+        if(d.highlight == 1){
+          return d.node_attr;
+        }
+      })
       .attr('x', 1)
       .attr('y', 3);
       //.call(d3.drag()     //text?��?
@@ -198,6 +233,8 @@ d3.json("./graph_driver/data/d3js_desPort.json", function(error, graph) {
   simulation.force("link")
       .links(graph.links);
 
+  
+
   function ticked() {
     link
         .attr("x1", function(d) { return d.source.x; })
@@ -211,6 +248,11 @@ d3.json("./graph_driver/data/d3js_desPort.json", function(error, graph) {
         })
   }
 });
+
+simulation.nodes().filter(function(d){
+    if(d.weight==0)
+      nodes.exit().remove();
+  })
 
 function dragstarted(d) {
   if (!d3.event.active) simulation.alphaTarget(0.3).restart();

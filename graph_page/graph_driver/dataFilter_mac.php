@@ -3,6 +3,9 @@
 
     $daterange_mac = $_GET["daterange_mac"];
 
+    $Max_num_nodes = $_GET["Max_num_nodes"];
+    $per_lab_show = $_GET["per_lab_show"];
+
     $daterangeAB = explode(" ~ ", $daterange_mac);
 
 
@@ -15,14 +18,9 @@
     
 
 
-    //print $tsA."->".$tsB;
 
 
-    //echo '<script>alert("complete!")</script>';
-    //echo("<script>console.log('".$result."');</script>");
-    //echo "python3 /var/www/html/graph_page/graph_driver/d3js_macAB_v4.py y ".$tsA." ".$tsB;
-
-    exec("python3 /var/www/html/graph_page/graph_driver/d3js_macAB_v4.py y ".$tsA." ".$tsB, $result);
+    exec("python3 /var/www/html/graph_page/graph_driver/d3js_macAB_v4.py y ".$tsA." ".$tsB." -HL ".$Max_num_nodes." ".$per_lab_show, $result);
 
     //echo $result;
 

@@ -2,6 +2,8 @@
     date_default_timezone_set("Asia/Taipei");        //reset timezone
 
     $daterange_dns = $_GET["daterange_dns"];
+    $Max_num_nodes = $_GET["Max_num_nodes"];
+    $per_lab_show = $_GET["per_lab_show"];
     $srcIpFilter_dns = $_GET["srcIpFilter_dns"];
     $ipFilter_ck = $_GET["ipCheckbox"];
 
@@ -9,15 +11,8 @@
 
 
     print("data processing...");
-    //system("pwd",$result);
-    //print ("pwd: ".$result);
 
-    //echo "<br>".exec("whoami");
-    //echo "<br>".exec("pwd"); 
 
-    
-
-    //exec("python3 /var/www/html/graph_page/graph_driver/d3js_conPktDelay_v3.py y 1615600800 1615608000")
 
 
     $tsA = strtotime("$daterangeAB[0]");
@@ -29,10 +24,10 @@
 
 
     if($ipFilter_ck == "on"){
-        exec("python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." y ".$srcIpFilter_dns, $result);
+        exec("python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." y ".$srcIpFilter_dns." -HL ".$Max_num_nodes." ".$per_lab_show, $result);
         //print("<br>python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." y ".$srcIpFilter_dns);
     }else{
-        exec("python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." n", $result);
+        exec("python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." n"." -HL ".$Max_num_nodes." ".$per_lab_show, $result);
         //print("<br>python3 /var/www/html/graph_page/graph_driver/d3js_DNS_v2.py y ".$tsA." ".$tsB." n");
     } 
 

@@ -34,11 +34,12 @@ require_once './session.php';
     <title>flashball</title>
 
     <style>
-        #test{
+        #test {
             height: 100px;
             width: 100%;
         }
-        iframe{
+
+        iframe {
             width: 100%;
             overflow: auto;
             height: calc(100vh - 276px);
@@ -63,6 +64,7 @@ require_once './session.php';
                             </nav>
                         </div>
                         <div class="col-md-4">
+                            <?php echo $_COOKIE["hi"]; ?>
                             <button type="button" class="btn btn-outline-light logout" onclick="location.href='logout.php'">logout</button>
                         </div>
                     </div>
@@ -72,9 +74,9 @@ require_once './session.php';
                 <div class="col-md-4">
                     <img src="./icon/play.png" alt="start" class="toolbar">
                     <img src="./icon/stop.png" alt="stop" class="toolbar">
-                    <a  href="process_connection.php"  target="main_iframe" class="select">connection</a>
-                    <label  for="">|</label>
-                    <a  href="process_packet.php" target="main_iframe" class="select">packet</a>
+                    <p id="conne" href="" target="" class="select pick_page" value="connection" active="1">connection</p>
+                    <label for="">|</label>
+                    <p id="pack" href="" target="" class="select pick_page" value="packet">packet</p>
                 </div>
                 <div class="col-md-4 align-self-center" style="display:flex;justify-content:center;align-items:center;">
                     <!--選擇時間範圍-->
@@ -96,8 +98,9 @@ require_once './session.php';
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
         <!-- 主頁iframe -->
-        <iframe name="main_iframe" id="main_iframe" src="process_connection.php"  frameborder="0"></iframe>
-    </body>
+        <iframe name="main_iframe" id="main_iframe" src="" frameborder="0"></iframe>
+</body>
+
 </html>
 
 
@@ -112,10 +115,8 @@ require_once './session.php';
                 </button>
             </div>
             <div class="modal-body">
-                <input type="radio" value="connection" id="conn_box" name="pick" checked>
-                <label for="conn_box">connection</label>
-                <input type="radio" value="packet" id="pkt_box" name="pick">
-                <label for="pkt_box">packet</label>
+                <input type="radio" value="connection" id="conn_box" name="pick" style="display: none;">
+                <input type="radio" value="packet" id="pkt_box" name="pick" style="display: none;">
                 <br>
                 <label for="protocol">protocol: </label>
                 <input type="text" name="Protocol" id="Connection_Type" placeholder="Protocol">
@@ -127,14 +128,6 @@ require_once './session.php';
                 <label for="srcPort">Port: </label>
                 <input type="text" name="Fourth_Layer-Source_Port" id="Source_Port" placeholder="Src Port">
                 <input type="text" name="Fourth_Layer-Destination_Port" id="Destination_Port" placeholder="Dst Port">
-                <!-- <br>
-                <label for="srcMac">Mac: </label>
-                <input type="text" name="srcMac" id="Source_Mac" placeholder="Src Mac">
-                <input type="text" name="dstMac" id="Destination_Mac" placeholder="Dst Mac">
-                <br>
-                <label for="connID">ID: </label>
-                <input type="text" name="connID" id="connID" placeholder="connection ID">
-                <input type="text" name="pktID" id="pktID" placeholder="packet ID"> -->
             </div>
             <div class="modal-footer">
                 <button id="btn_search" class="btn btn-secondary" data-dismiss="modal">search</button>
@@ -145,63 +138,91 @@ require_once './session.php';
 
 
 <script>
-var start = moment().startOf('day').unix();
-var end = moment().unix();
+    var start = moment().startOf('day').unix();
+    //var start = 1621612800;
+    var end = moment().unix();
+    //var end = 1621699199;
+    var data = [];
+    var filter = [];
 
-function chart(start, end){
-    $.ajax({
-        type: 'POST',
-        url: 'echartTest.php',
-        data: {
-            start:start,
-            end: end
-        },
-        dataType: "json",
-        success: function(msg) {
-            console.log(Object.keys(msg));
-            console.log(Object.values(msg));
+    //----------------query資料，丟目標位置跟條件------------------------//
+    function data_query(target, filter) {
+        var prefix = (target === "connection") ? `process_connection.php?type=${target}&` : `process_packet.php?type=${target}&`;
+        var page = "\$gt=" + start + "&\$lt=" + end + "&" + filter.join("&");
+        $("#main_iframe").attr("src", prefix + page);
+        chart(start, end);
+    }
 
-            var myChart = echarts.init(document.getElementById('main'));
-            var date = Object.keys(msg);
-            var data = Object.values(msg);
+    //----------------轉換timestamp to date------------------------------//
+    function timestamp_to_date(timestamp) {
+        var newdate = [];
+        var Month = [];
+        var date = [];
+        var Hours = [];
+        var Minutes = [];
+        var format = [];
+        for (var i = 0; i < timestamp.length; i++) {
+            newdate[i] = new Date(timestamp[i] * 1000);
+            Month[i] = newdate[i].getMonth() + 1;
+            date[i] = newdate[i].getDate();
+            Hours[i] = "0" + newdate[i].getHours();
+            Minutes[i] = "0" + newdate[i].getMinutes();
+            format[i] = Month[i] + "/" + date[i] + " " + Hours[i].substr(-2) + ":" + Minutes[i].substr(-2);
+        }
+        return format;
+    }
 
-            for(var i=0;i<date.length;i++){
-                var singleDate = date[i].split("_");
-                date[i] = singleDate[0]+"-"+singleDate[1]+"-"+singleDate[2]+" "+singleDate[3]+":"+singleDate[4];
-            }
 
-            option = {
-                tooltip: {
-                    trigger: 'axis',
-                    position: function (pt) {
-                        return [pt[0], '10%'];
-                    }
-                },
-                title: {
-                    y: 10,
-                    left: 'center',
-                    text: '連線數量趨勢圖',
-                    textStyle:{
-                        fontSize:15,
-                        fontFamily:"MingLiU",
-                    }
-                },
-                toolbox: {
-                    feature: {
-                        saveAsImage: {}
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    boundaryGap: false,
-                    data: date
-                },
-                yAxis: {
-                    type: 'value',
-                    boundaryGap: [0, '0%']
-                },
-                series: [
-                    {
+    function chart(start, end) {
+        $.ajax({
+            type: 'POST',
+            url: 'echartTest.php',
+            data: {
+                start: start,
+                end: end
+            },
+            dataType: "json",
+            success: function(msg) {
+                console.log(Object.keys(msg));
+                console.log(Object.values(msg));
+
+                var myChart = echarts.init(document.getElementById('main'));
+                var date = Object.keys(msg);
+                var data = Object.values(msg);
+
+                date = timestamp_to_date(date);
+
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function(pt) {
+                            return [pt[0], '10%'];
+                        }
+                    },
+                    title: {
+                        y: 10,
+                        left: 'center',
+                        text: '連線數量趨勢圖',
+                        textStyle: {
+                            fontSize: 15,
+                            fontFamily: "MingLiU",
+                        }
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '0%']
+                    },
+                    series: [{
                         name: '連線量',
                         type: 'line',
                         symbol: 'none',
@@ -219,72 +240,71 @@ function chart(start, end){
                             }])
                         },
                         data: data
+                    }]
+                };
+
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+            }
+        });
+    }
+
+    $(function() {
+
+        //--------------網頁一讀取，先query預設資料---------------------------//
+        data_query("connection", filter);
+        //---------------選擇connection還是packet頁面------------------------//
+        $(".pick_page").on("click", function() {
+            var id = $(this).attr("id");
+            filter = [];
+            $(".pick_page").attr("active", 0);
+            $(`#${id}`).attr("active", 1);
+            data_query($(this).attr("value"), filter);
+        })
+
+        $('#reportrange').daterangepicker({
+            startDate: moment().startOf('day'),
+            endDate: moment(),
+            // startDate: "2021-05-22 00:00 ",
+            // endDate: "2021-05-22 23:59",
+            showDropdowns: true,
+            timePicker: true,
+            locale: {
+                format: 'M/DD hh:mm A'
+            }
+        });
+
+        $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
+            var type = $(".pick_page[active=1]").attr("value");
+            start = Date.parse(picker.startDate.format('YYYY-MM-DD HH:mm')) / 1000;
+            end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm')) / 1000;
+
+            data_query(type, filter);
+        });
+
+        $("#btn_search").on("click", function() {
+
+            var type = $(".pick_page[active=1]").attr("value");
+            filter = [];
+            if (type == "connection") {
+                $(this).parent().prev().children("input[type=text]").each(function() {
+                    if ($(this).val() != "") {
+                        filter.push($(this).attr('id') + "=" + $(this).val());
                     }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-        }
-    });
-}
-
-$(function() {
-    chart(start, end);
+                })
 
 
-    $('#reportrange').daterangepicker({
-        startDate: moment().startOf('isoWeek'),
-        endDate: moment(),
-        showDropdowns: true,
-        timePicker24Hour: true,
-        ranges: {
-        'Today': [moment(), moment()],
-        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-        'This Month': [moment().startOf('month'), moment().endOf('month')],
-        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        locale: {
-           format: 'YYYY-MM-DD HH:mm'
-        }
-    });
+            } else if (type == "packet") {
+                $(this).parent().prev().children("input[type=text]").each(function() {
+                    if ($(this).val() != "") {
+                        filter.push($(this).attr('name') + "=" + $(this).val());
+                    }
+                })
+            }
+            data_query(type, filter);
 
-    $('#reportrange').on('apply.daterangepicker',function(ev, picker) {
-        start = Date.parse(picker.startDate.format('YYYY-MM-DD HH:mm'))/1000;
-        end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm'))/1000;
+        });
 
-        chart(start, end);
-    });
-});
-
-    $("#btn_search").on("click",function(){
-
-        var type = $("input[name=pick]:checked").val();
-        var a = "process_connection.php?type=connection&";
-        var b = "process_packet.php?type=packet&";
-        if(type == "connection"){
-            $(this).parent().prev().children("input").each(function(){
-                if($(this).val() != ""){
-                    //alert($(this).attr("id")+":"+$(this).val());
-                    a += $(this).attr('id') +'='+ $(this).val() +'&';
-                }
-            })
-            console.log(a);
-          $("#main_iframe").attr("src",a);
-
-        }else if(type == "packet"){
-            $(this).parent().prev().children("input").each(function(){
-                if($(this).val() != ""){
-                    b += $(this).attr("name") +"="+ $(this).val() +"&";
-                }
-            })
-            console.log(b);
-          $("#main_iframe").attr("src",b);
-        }
 
     });
-
-
 </script>

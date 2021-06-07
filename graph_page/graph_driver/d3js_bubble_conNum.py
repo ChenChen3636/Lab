@@ -59,16 +59,8 @@ def main():
   
   
   if check_data_range == "y":
-  
-    #s_YYYY,s_MM,s_DD,s_hh,s_mm,s_ss = input("input start time (YYYY/MM/DD/hh/mm/ss): ").split() 
-    #e_YYYY,e_MM,e_DD,e_hh,e_mm,e_ss = input("input end time (YYYY/MM/DD/hh/mm/ss): ").split()
-    
-    #s_timeStr = "{}-{}-{} {}:{}:{}".format(s_YYYY, s_MM, s_DD, s_hh, s_mm, s_ss)
-    #e_timeStr = "{}-{}-{} {}:{}:{}".format(e_YYYY, e_MM, e_DD, e_hh, e_mm, e_ss)
-    
-    #s_timeAry = time.strptime(s_timeStr, "%Y-%m-%d %H:%M:%S")
+
     s_timeStamp = int(argv_list[2])
-    #e_timeAry = time.strptime(e_timeStr, "%Y-%m-%d %H:%M:%S")
     e_timeStamp = int(argv_list[3])
     
     
@@ -96,6 +88,11 @@ def main():
     srcIp_specify = srcIp_specify.split(".")
     desIp_specify = desIp_specify.split(".")
     print("select all ip...")
+
+
+  for i in range(len(argv_list)):     #get highlight mark value
+    if(argv_list[i] == "-HL"):
+      hl_value = int(argv_list[i+1])
   
   
   
@@ -228,6 +225,25 @@ def main():
         node_field_srcLinkNum[i] += relation_field_conNum[j]
 
 
+  #highlight mark write
+
+  highlight_mark = list()
+  
+  for i in range(len(record_ip_list)):
+  
+    curr_value = node_field_desLinkNum[i]
+  
+    if(len(highlight_mark) <= hl_value):
+      highlight_mark.append(curr_value)
+      highlight_mark.sort()
+    else:
+      if(curr_value > highlight_mark[0]):
+        highlight_mark[0] = curr_value
+        highlight_mark.sort()
+      else:
+        continue
+
+
   #write data
   fdata_d3js = open("./data/d3js_bubble_ipAB.json", "w")
   
@@ -235,8 +251,12 @@ def main():
 
   check_loop_first = 1
   for i in range(len(record_ip_list)):      #node
-    node_json = json.dumps({"ip_addr": record_ip_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i]})
-    #node_json = json.loads(node_json)    #single quote
+  
+    if(node_field_desLinkNum[i] >= highlight_mark[0]):
+      node_json = json.dumps({"ip_addr": record_ip_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i]})
+    else:
+      continue
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))

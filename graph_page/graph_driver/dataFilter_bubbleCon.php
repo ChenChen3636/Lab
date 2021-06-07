@@ -1,7 +1,8 @@
-<?php
+    <?php
     date_default_timezone_set("Asia/Taipei");        //reset timezone
 
     $daterange_ip = $_GET["daterange_bubbleCon"];
+    $Max_num_nodes = $_GET["Max_num_nodes"];
     $srcIpFilter_ip = $_GET["srcIpFilter_ip"];
     $desIpFilter_ip = $_GET["desIpFilter_ip"];
     $ipFilter_ck = $_GET["ipCheckbox"];
@@ -29,10 +30,10 @@
 
 
     if($ipFilter_ck == "on"){
-        exec("python3 /var/www/html/graph_page/graph_driver/d3js_bubble_conNum.py y ".$tsA." ".$tsB." y ".$srcIpFilter_ip." ".$desIpFilter_ip, $result);
+        exec("python3 /var/www/html/graph_page/graph_driver/d3js_bubble_conNum.py y ".$tsA." ".$tsB." y ".$srcIpFilter_ip." ".$desIpFilter_ip." -HL ".$Max_num_nodes, $result);
         //print("<br>python3 /var/www/html/graph_page/graph_driver/d3js_ipAB_v6.py y ".$tsA." ".$tsB." y ".$srcIpFilter_ip." ".$desIpFilter_ip);
     }else{
-        exec("python3 /var/www/html/graph_page/graph_driver/d3js_bubble_conNum.py y ".$tsA." ".$tsB." n", $result);
+        exec("python3 /var/www/html/graph_page/graph_driver/d3js_bubble_conNum.py y ".$tsA." ".$tsB." n"." -HL ".$Max_num_nodes, $result);
         //print("<br>python3 /var/www/html/graph_page/graph_driver/d3js_ipAB_v6.py y ".$tsA." ".$tsB." n");
     }
 

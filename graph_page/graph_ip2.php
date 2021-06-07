@@ -55,6 +55,20 @@ header("Pragma: no-cache");
             <input type="text" class="form-control" name="daterange_ip"  value="<?php echo $_GET["lastDate"]?>">
           </div>
 
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <h5><label for="Max_num_nodes">Maximum number of nodes display</label></h5>
+                <input type="text" class="form-control" name="Max_num_nodes"  value = 100 required>
+              </div>
+              <div class="col">
+                <h5><label for="Percentage_label_display">Percentage of label to display</label></h5>
+                <input type="range" class="form-control-range" id="per_lab_show" name="per_lab_show" min="0" max="100" value = 30 oninput="document.getElementById('rangeval').innerText = document.getElementById('per_lab_show').value+'%'">
+                <h5><span style="color:black; font-weight:bold;" id="rangeval">30%</span></h5>
+              </div>
+            </div>
+          </div>
+
           
           <div class="form-group">
             <div class="card-body">
@@ -137,11 +151,11 @@ $(function() {
 
 text {
   font-family: sans-serif;
-  font-size: 12px;
+  font-size: 15px;
 }
 
 </style>
-<svg width="2480" height="1980"></svg>    <!-- width="960" height="600" -->
+<svg width="1280" height="1080"></svg>    <!-- width="960" height="600" -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -155,7 +169,7 @@ var simulation = d3.forceSimulation()
     .force("link", d3.forceLink().id(function(d) { return d.ip_addr; }))
     .force("charge", d3.forceManyBody().strength(-30))        //default -30
     .force("collision", d3.forceCollide().radius(d => 32))
-    .force("center", d3.forceCenter(width / 2, height / 2));
+    .force("center", d3.forceCenter(width / 2, height / 3));
 
 d3.json("./graph_driver/data/d3js_ipAB.json", function(error, graph) {
   if (error) throw error;
@@ -190,7 +204,7 @@ d3.json("./graph_driver/data/d3js_ipAB.json", function(error, graph) {
 
   var lables = node.append("text")
       .text(function(d) {
-        if(d.src_link_num+d.des_link_num > 10){
+        if(d.highlight == 1){
           return d.ip_addr;
         }
       })

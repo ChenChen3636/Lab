@@ -38,8 +38,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
 <script>
     
-    var title="Daily of internet traffic";
-    var units=" Bytes";
+    var title="Migrant deaths in the Mediterranean";
+    var units=" dead or missing";
     var breaks=[10,25,50,100];
     var colours=["#ffffd4","#fed98e","#fe9929","#d95f0e","#993404"];
     
@@ -55,7 +55,7 @@
     format = d3.time.format("%d-%m-%Y");
     toolDate = d3.time.format("%d/%b/%y");
     
-    d3.csv("./graph_driver/data/cal_test_data.csv", function(error, data) {
+    d3.csv("data.csv", function(error, data) {
         
         //set up an array of all the dates in the data which we need to work out the range of the data
         var dates = new Array();

@@ -58,15 +58,7 @@ def main():
   
   if check_data_range == "y":
   
-    ##s_YYYY,s_MM,s_DD,s_hh,s_mm,s_ss = input("input start time (YYYY/MM/DD/hh/mm/ss): ").split() 
-    #e_YYYY,e_MM,e_DD,e_hh,e_mm,e_ss = input("input end time (YYYY/MM/DD/hh/mm/ss): ").split()
-    
-    #s_timeStr = "{}-{}-{} {}:{}:{}".format(s_YYYY, s_MM, s_DD, s_hh, s_mm, s_ss)
-    #e_timeStr = "{}-{}-{} {}:{}:{}".format(e_YYYY, e_MM, e_DD, e_hh, e_mm, e_ss)
-    
-    #s_timeAry = time.strptime(s_timeStr, "%Y-%m-%d %H:%M:%S")
     s_timeStamp = int(argv_list[2])
-    #e_timeAry = time.strptime(e_timeStr, "%Y-%m-%d %H:%M:%S")
     e_timeStamp = int(argv_list[3])
     
     
@@ -76,7 +68,12 @@ def main():
   else:
     print("select all data...")
     
-    
+  
+  for i in range(len(argv_list)):     #get highlight mark value
+    if(argv_list[i] == "-HL"):
+      hl_value = int(argv_list[i+1])
+      per_lab = int(argv_list[i+2])
+
     
   check_ip_range = argv_list[4]
   
@@ -108,7 +105,7 @@ def main():
   node_field_linkNum = list()
   
   
-  cursor_packet = mycol_packet.find({"Fourth_Layer.Fourth_Layer_Option.DNS_Info": {"$exists": "true"}, "Fourth_Layer.Destination_Port": 53, "$and": [ { "Arrival_Time": {"$gt": s_timeStamp} }, { "Arrival_Time": {"$lt": e_timeStamp} }]})    #check dns query
+  cursor_packet = mycol_packet.find({"Fourth_Layer.Fourth_Layer_Option.DNS_Info.Question": {"$exists": "true"}, "Fourth_Layer.Destination_Port": 53, "$and": [ { "Arrival_Time": {"$gt": s_timeStamp} }, { "Arrival_Time": {"$lt": e_timeStamp} }]})    #check dns query
   
   for single_pkt in cursor_packet:
   
@@ -208,15 +205,42 @@ def main():
 
 
 
+
+
+  #highlight mark
+  
+  highlight_mark_hostNam = list()
+  
+  for i in range(len(record_hostName_list)):
+  
+    curr_value = node_field_linkNum[i]
+  
+    if(len(highlight_mark_hostNam) <= hl_value):
+      highlight_mark_hostNam.append(curr_value)
+      highlight_mark_hostNam.sort()
+    else:
+      if(curr_value > highlight_mark_hostNam[0]):
+        highlight_mark_hostNam[0] = curr_value
+        highlight_mark_hostNam.sort()
+      else:
+        continue
+
+
+  text_show_index = int(len(highlight_mark_hostNam) - (len(highlight_mark_hostNam) * (per_lab/100)))
+
+
   #write data
+
+  deleNode_list = list()       #save to bigger than the limit number of node
+
   fdata_d3js = open("./data/d3js_DNS.json", "w")
   
   fdata_d3js.write("{\n\t\"nodes\": [\n\t\t")
 
   check_loop_first = 1
   for single_node in record_srcIP_list:          #node  srcIP
-    node_json = json.dumps({"node_attr": single_node, "group": 1})
-    #node_json = json.loads(node_json)    #single quote
+    node_json = json.dumps({"node_attr": single_node, "highlight":1, "group": 1})
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))
@@ -254,8 +278,20 @@ def main():
   
   check_loop_first = 1
   for i in range(len(record_hostName_list)):          #node DNS  hostName
-    node_json = json.dumps({"node_attr": record_hostName_list[i], "link_num": node_field_linkNum[i], "group": 2})
-    #node_json = json.loads(node_json)    #single quote
+
+
+    if(node_field_linkNum[i] >= highlight_mark_hostNam[0]):
+
+      if(node_field_linkNum[i] >= highlight_mark_hostNam[text_show_index]):
+        node_json = json.dumps({"node_attr": record_hostName_list[i], "link_num": node_field_linkNum[i], "highlight":1, "group": 2})
+      else:
+        node_json = json.dumps({"node_attr": record_hostName_list[i], "link_num": node_field_linkNum[i], "highlight":0, "group": 2})
+
+    else:
+      deleNode_list.append(record_srcIP_list[i])
+      continue
+
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))
@@ -276,9 +312,17 @@ def main():
   
   check_loop_first = 1
   for i in range(len(record_relation_list)):          #rel
+
     rel_json = json.loads(record_relation_list[i])
+
+    try:                                        #delete no node rel
+      deleNode_list.index(rel_json["source"])
+      continue
+    except ValueError:
+      process = "pass"
+
     rel_json = json.dumps({"source": rel_json["source"], "target": rel_json["target"], "type": "Connection_FK", "con_num": relation_field_conNum[i]})
-    #rel_json = json.loads(rel_json)    #single quote
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(rel_json))

@@ -46,8 +46,23 @@ header("Pragma: no-cache");
 
         <form action="./graph_driver/dataFilter_mac.php" method="GET">
           <div class="form-group">
-            <label for="data_time_range">Time range</label><br>
+            <h5><label for="data_time_range">Time range</label><br></h5>
             <input type="text" class="form-control" name="daterange_mac"  value="<?php echo $_GET["lastDate"]?>">
+          </div>
+
+
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <h5><label for="Max_num_nodes">Maximum number of nodes display</label></h5>
+                <input type="text" class="form-control" name="Max_num_nodes"  value = 200 required>
+              </div>
+              <div class="col">
+                <h5><label for="Percentage_label_display">Percentage of label to display</label></h5>
+                <input type="range" class="form-control-range" id="per_lab_show" name="per_lab_show" min="0" max="100" value = 30 oninput="document.getElementById('rangeval').innerText = document.getElementById('per_lab_show').value+'%'">
+                <h5><span style="color:black; font-weight:bold;" id="rangeval">30%</span></h5>
+              </div>
+            </div>
           </div>
 
           <table>
@@ -114,11 +129,11 @@ header("Pragma: no-cache");
 
 text {
   font-family: sans-serif;
-  font-size: 12px;
+  font-size: 18px;
 }
 
 </style>
-<svg width="2480" height="1980"></svg>    <!-- width="960" height="600" -->
+<svg width="1680" height="1080"></svg>    <!-- width="960" height="600" -->
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script>
 
@@ -167,7 +182,9 @@ d3.json("./graph_driver/data/d3js_macAB.json", function(error, graph) {
 
   var lables = node.append("text")
       .text(function(d) {
-        return d.mac_addr;
+        if(d.highlight == 1){
+          return d.mac_addr;
+        }
       })
       .attr('x', 6)
       .attr('y', 3);

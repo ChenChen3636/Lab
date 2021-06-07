@@ -51,6 +51,16 @@ header("Pragma: no-cache");
             <input type="text" class="form-control" name="daterange_bubbleCon"  value= "<?php echo $_GET["lastDate"]?>">
           </div>
 
+          <div class="form-group">
+            <div class="row">
+              <div class="col">
+                <h5><label for="Max_num_nodes">Maximum number of nodes display</label></h5>
+                <input type="text" class="form-control" name="Max_num_nodes"  value = 50 required>
+              </div>
+
+            </div>
+          </div>
+
           
           <div class="form-group">
             <div class="card-body">
@@ -164,7 +174,12 @@ header("Pragma: no-cache");
             .attr("height", diameter)
             .attr("class", "bubble");
 
-        var nodes = d3.hierarchy(jsonData).sum(function(d) { return d.des_link_num; });
+        var nodes = d3.hierarchy(jsonData).sum(function(d) {      //fix
+          if(d.des_link_num > 3)
+            return d.des_link_num;
+          else
+            return;
+        });
 
         var node = svg.selectAll(".node")
             .data(bubble(nodes).descendants())
@@ -203,17 +218,6 @@ header("Pragma: no-cache");
             })
             .attr("fill", "white");
 
-        node.append("text")             //conNum
-            .attr("dy", "1.3em")
-            .style("text-anchor", "middle")
-            .text(function(d) {
-                return d.data.des_link_num;
-            })
-            .attr("font-family",  "Gill Sans", "Gill Sans MT")
-            .attr("font-size", function(d){
-                return d.r/5;
-            })
-            .attr("fill", "white");
 
         d3.select(self.frameElement)
             .style("height", diameter + "px");

@@ -71,6 +71,13 @@ def main():
     
   else:
     print("select all data...")
+
+
+
+  for i in range(len(argv_list)):     #get highlight mark value
+    if(argv_list[i] == "-HL"):
+      hl_value = int(argv_list[i+1])
+      per_lab = int(argv_list[i+2])
   
   
   
@@ -91,10 +98,6 @@ def main():
   cursor_packet = mycol_packet.find({"$and": [ { "Arrival_Time": {"$gt": s_timeStamp} }, { "Arrival_Time": {"$lt": e_timeStamp} }]})
   for single_pkt in cursor_packet:
   
-  
-    #if check_data_range == "y":        #filter data time
-      #if not (single_pkt["Arrival_Time"]>=s_timeStamp and single_pkt["Arrival_Time"]<=e_timeStamp) :
-        #continue
   
     macA = single_pkt["Second_Layer"]["Source_MAC"]
     macB = single_pkt["Second_Layer"]["Destination_MAC"]
@@ -154,16 +157,55 @@ def main():
 
 
 
+  #highlight_mark data
+
+
+  highlight_mark = list()
+  
+  for i in range(len(record_mac_list)):
+  
+    curr_value = node_field_srcLinkNum[i]+node_field_desLinkNum[i]
+  
+    if(len(highlight_mark) <= hl_value):
+      highlight_mark.append(curr_value)
+      highlight_mark.sort()
+    else:
+      if(curr_value > highlight_mark[0]):
+        highlight_mark[0] = curr_value
+        highlight_mark.sort()
+      else:
+        continue
+
+
+  text_show_index = int(len(highlight_mark) - (len(highlight_mark) * (per_lab/100)))
+
+
   #write data
+
+  deleNode_list = list()       #save to bigger than the limit number of node
+
   fdata_d3js = open("./data/d3js_macAB.json", "w")
   
   fdata_d3js.write("{\n\t\"nodes\": [\n\t\t")
 
   check_loop_first = 1
   for i in range(len(record_mac_list)):      #node
-    node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i]})
-    #node_json = json.loads(node_json)    #single quote
-    
+
+    total_link = node_field_srcLinkNum[i]+node_field_desLinkNum[i]
+
+    if(total_link >= highlight_mark[0]):
+
+      if(total_link >= highlight_mark[text_show_index]):
+        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "highlight": 1})
+      else:
+        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "highlight": 0})
+
+    else:
+      deleNode_list.append(record_mac_list[i])
+      continue
+
+
+
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))
       print(node_json)
@@ -180,9 +222,23 @@ def main():
   
   check_loop_first = 1
   for i in range(len(record_relation_list)):          #rel
+
     rel_json = json.loads(record_relation_list[i])
+
+    try:                                        #delete no node rel
+      deleNode_list.index(rel_json["source"])
+      continue
+    except ValueError:
+      process = "pass"
+
+    try:
+      deleNode_list.index(rel_json["target"])
+      continue
+    except ValueError:
+      process = "pass"
+
     rel_json = json.dumps({"source": rel_json["source"], "target": rel_json["target"], "type": "Connection_mac", "con_num": relation_field_conNum[i]})
-    #rel_json = json.loads(rel_json)    #single quote
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(rel_json))

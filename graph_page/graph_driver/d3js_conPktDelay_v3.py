@@ -58,16 +58,7 @@ def main():
   
   
   if check_data_range == "y":
-  
-    ##s_YYYY,s_MM,s_DD,s_hh,s_mm,s_ss = input("input start time (YYYY/MM/DD/hh/mm/ss): ").split() 
-    #e_YYYY,e_MM,e_DD,e_hh,e_mm,e_ss = input("input end time (YYYY/MM/DD/hh/mm/ss): ").split()
-    
-    #s_timeStr = "{}-{}-{} {}:{}:{}".format(s_YYYY, s_MM, s_DD, s_hh, s_mm, s_ss)
-    #e_timeStr = "{}-{}-{} {}:{}:{}".format(e_YYYY, e_MM, e_DD, e_hh, e_mm, e_ss)
-    
-    #s_timeAry = time.strptime(s_timeStr, "%Y-%m-%d %H:%M:%S")
     s_timeStamp = int(argv_list[2])
-    #e_timeAry = time.strptime(e_timeStr, "%Y-%m-%d %H:%M:%S")
     e_timeStamp = int(argv_list[3])
     
     
@@ -77,8 +68,15 @@ def main():
   else:
     print("select all data...")
     
+
+
+  for i in range(len(argv_list)):     #get highlight mark value
+    if(argv_list[i] == "-HL"):
+      hl_value = int(argv_list[i+1])
+      per_lab = int(argv_list[i+2])
     
     
+
   check_ip_range = argv_list[4]
   
   srcIp_specify = "n.n.n.n"
@@ -90,8 +88,8 @@ def main():
   else:
     srcIp_specify = srcIp_specify.split(".")
     print("select all ip...")
-  
-  
+
+
   
   #----data processing
   print("data processing...")
@@ -105,7 +103,8 @@ def main():
   record_relation_list = list()    #link
   relation_field_conNum = list()
   
-  node_field_linkNum = list()
+  node_field_linkNum = list()  #time range node
+  nodeSrcIP_field_linkNum = list()  #src ip node
   
   max_delay_time = 0
   
@@ -139,7 +138,7 @@ def main():
     else:
       con_srcIP = long2ip(con_srcIP)
       filter_ck = con_srcIP.split(".")
-      if (filter_ck[3] == "255" or filter_ck == "0.0.0.0"):          #remove broadcast
+      if (filter_ck[3] == "255" or con_srcIP == "0.0.0.0"):          #remove broadcast
         continue
       elif (int(filter_ck[0]) >= 224 and int(filter_ck[0]) <= 239):  #remove Multicast
         continue
@@ -195,24 +194,72 @@ def main():
     node_field_linkNum.append(0)
 
 
-  for i in range(len(record_timeRange_list)):        #calculate node link number
+  for i in range(len(record_timeRange_list)):        #calculate time range node link number
     for j in range(len(record_relation_list)):
       cursor_rel = json.loads(record_relation_list[j])
       if(cursor_rel["target"] == record_timeRange_list[i]):
         node_field_linkNum[i] += relation_field_conNum[j]
 
 
+    
+
+  for i in range(len(record_srcIP_list)):        #calculate src ip node link number
+    nodeSrcIP_field_linkNum.append(0)
+    for j in range(len(record_relation_list)):
+      cursor_rel = json.loads(record_relation_list[j])
+      if(cursor_rel["source"] == record_srcIP_list[i]):
+        nodeSrcIP_field_linkNum[i] += relation_field_conNum[j]
+
+
+
+
+  #highlight_mark data
+  
+  highlight_mark = list()
+  
+  for i in range(len(record_srcIP_list)):
+  
+    curr_value = nodeSrcIP_field_linkNum[i]
+  
+    if(len(highlight_mark) <= hl_value):
+      highlight_mark.append(curr_value)
+      highlight_mark.sort()
+    else:
+      if(curr_value > highlight_mark[0]):
+        highlight_mark[0] = curr_value
+        highlight_mark.sort()
+      else:
+        continue
+
+
+  text_show_index = int(len(highlight_mark) - (len(highlight_mark) * (per_lab/100)))
+
+
 
   #write data
+
+  deleNode_list = list()       #save to bigger than the limit number of node
+
   fdata_d3js = open("./data/d3js_conPktDelay.json", "w")
   
   fdata_d3js.write("{\n\t\"nodes\": [\n\t\t")
 
 
   check_loop_first = 1
-  for single_node in record_srcIP_list:          #node
-    node_json = json.dumps({"node_attr": single_node, "group": 1})
-    #node_json = json.loads(node_json)    #single quote
+  for i in range (len(record_srcIP_list)):          #node
+  
+
+    if(nodeSrcIP_field_linkNum[i] >= highlight_mark[0]):
+
+      if(nodeSrcIP_field_linkNum[i] >= highlight_mark[text_show_index]):
+        node_json = json.dumps({"node_attr": record_srcIP_list[i], "group": 1, "highlight": 1})
+      else:
+        node_json = json.dumps({"node_attr": record_srcIP_list[i], "group": 1, "highlight": 0})
+
+    else:
+      deleNode_list.append(record_srcIP_list[i])
+      continue
+
     
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))
@@ -225,13 +272,17 @@ def main():
     fdata_d3js.write(str(node_json))
     print(node_json)
 
+
   fdata_d3js.write(",")
   fdata_d3js.write("\n\t\t")
 
   check_loop_first = 1
   for i in range(len(record_timeRange_list)):          #node time range
-    node_json = json.dumps({"node_attr": record_timeRange_list[i], "link_num": node_field_linkNum[i], "group": 2})
-    #node_json = json.loads(node_json)    #single quote
+
+    if(node_field_linkNum[i] != 0):
+      node_json = json.dumps({"node_attr": record_timeRange_list[i], "link_num": node_field_linkNum[i], "group": 2})
+    else:
+      continue
     
     if check_loop_first == 1:
       fdata_d3js.write(str(node_json))
@@ -249,10 +300,19 @@ def main():
   
   check_loop_first = 1
   for i in range(len(record_relation_list)):          #rel
+
     rel_json = json.loads(record_relation_list[i])
-    rel_json = json.dumps({"source": rel_json["source"], "target": rel_json["target"], "type": "Connection_FK", "con_num": relation_field_conNum[i]})
-    #rel_json = json.loads(rel_json)    #single quote
+
+    try:                                        #delete no node rel
+      deleNode_list.index(rel_json["source"])
+      continue
+    except ValueError:
+      process = "pass"
+
+    rel_json = json.dumps({"source": rel_json["source"], "target": rel_json["target"], "type": "Connection_ip", "con_num": relation_field_conNum[i]})
+
     
+
     if check_loop_first == 1:
       fdata_d3js.write(str(rel_json))
       print(rel_json)
