@@ -1,51 +1,30 @@
 <?php
-function filter()
+function converse_filter_type($filter)
 {
     $intList = ["Source_Port", "Source_IP", "Destination_IP", "Source_Port", "Destination_Port", "Third_Layer-Source_IP", "Third_Layer-Destination_IP", "Fourth_Layer-Source_Port", "Fourth_Layer-Destination_Port"];
     $strList = ["Connection_Type", "Protocol"];
-    $timeList = ["\$gt", "\$lt"];
-    $result = [];
-    $timeRange = [];
-    $new_key = "";
-
     foreach ($intList as $index => $key) {
-        if (array_key_exists($key, $_POST)) {
-            $new_key = $key;
-
+        if (array_key_exists($key, $filter)) {
             if ($key == "Source_IP" || $key == "Destination_IP") {
-                $_POST[$new_key] = ip2long($_POST[$key]);
-            } elseif ($key == "Third_Layer-Source_IP" || $key == "Third_Layer-Destination_IP") {
-                $new_key = str_replace("-", ".", $key);
-                $_POST[$key] = ip2long($_POST[$key]);
-            } elseif ($key == "Fourth_Layer-Source_Port" || $key == "Fourth_Layer-Destination_Port") {
-                $new_key = str_replace("-", ".", $key);
+                $filter[$key] = ip2long($filter[$key]);
+            } else if ($key == "Third_Layer-Source_IP" || $key == "Third_Layer-Destination_IP") {
+                $key = str_replace("-", ".", $key);
+                $filter[$key] = ip2long($filter[$key]);
+            } else if ($key == "Fourth_Layer-Source_Port" || $key == "Fourth_Layer-Destination_Port") {
+                $key = str_replace("-", ".", $key);
+                $filter[$key] = intval($filter[$key]);
             }
-            $result[$new_key] = intval($_POST[$key]);
+            $filter[$key] = intval($filter[$key]);
         }
     }
-
     foreach ($strList as $index => $key) {
-        if (array_key_exists($key, $_POST)) {
-            $result[$key] = $_POST[$key];
-
+        if (array_key_exists($key, $filter)) {
             if ($key == "Connection_Type" || "Protocol") {
-                $result[$key] = protocol($result[$key])["int"];
+                $filter[$key] = protocol($filter[$key])["int"];
             }
         }
     }
-
-    foreach ($timeList as $index => $key) {
-        if (array_key_exists($key, $_POST)) {
-            $timeRange[$key] = intval($_POST[$key]);
-        }
-        if ($_POST["type"] == "connection") {
-            $result["Start_Time"] = $timeRange;
-        } elseif ($_POST["type"] == "packet") {
-            $result["Arrival_Time"] = $timeRange;
-        }
-    }
-
-    return $result;
+    return $filter;
 }
 function option()
 {
