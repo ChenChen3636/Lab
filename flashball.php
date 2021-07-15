@@ -39,17 +39,16 @@ require_once './session.php';
             width: 100%;
         }
 
-        iframe {
+        #main_div {
             width: 100%;
             overflow: auto;
-            height: calc(100vh - 276px);
+            height: calc(100vh - 330px);
         }
     </style>
 
 </head>
 
 <body>
-
     <div class="container-fluid">
         <div style="position: fixed; z-index:2; width:99%;">
             <div class="row">
@@ -72,9 +71,11 @@ require_once './session.php';
             </div>
             <div class="row" style="background-color:cornsilk; box-shadow: 0px 11px 8px -8px #CCC, 0px -11px 8px -10px #CCC;">
                 <div class="col-md-4">
+                    <!-- 動態列表啟動暫停 -->
                     <img src="./icon/play.png" alt="start" class="toolbar">
                     <img src="./icon/stop.png" alt="stop" class="toolbar">
-                    <p id="conne" href="" target="" class="select pick_page" value="connection" active="1">connection</p>
+                    <!-- 選擇connection or packet -->
+                    <p id="conne" href="" target="" class="select pick_page active" value="connection">connection</p>
                     <label for="">|</label>
                     <p id="pack" href="" target="" class="select pick_page" value="packet">packet</p>
                 </div>
@@ -94,11 +95,100 @@ require_once './session.php';
         </div>
 
         <!-- 圖表背景 -->
-        <div style="padding-top:70px ;">
+        <div class="row" style="padding-top:70px ;">
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
-        <!-- 主頁iframe -->
-        <iframe name="main_iframe" id="main_iframe" src="" frameborder="0"></iframe>
+        <!-- 欄位選項 -->
+        <div class="row justify-content-betweenw">
+            <div>
+                <select id="select_col" class="form-control" style="width: 20px;">
+                    <option>Maximum_TimeInterval</option>
+                    <option>Minimum_TimeInterval</option>
+                    <option>Average_TimeInterval</option>
+                    <option>Maximum_A2Bbytes</option>
+                    <option>Maximum_B2Abytes</option>
+                    <option>Minimum_A2Bbytes</option>
+                    <option>Minimum_B2Abytes</option>
+                    <option>Maximum_bytes</option>
+                    <option>Minimum_bytes</option>
+                    <option>Average_bytes</option>
+                </select>
+            </div>
+            <div style="display: grid; grid-template-columns:auto auto auto">
+                <?php require_once './pagination.php' ?>
+                <div style="margin-top: 10px;margin-left:10px">
+                    <a id="total_page"></a>
+                    <label>pages </label>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status" id="loading">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!--  -->
+        <!-- 主頁div -->
+        <!--  -->
+
+        <div id="main_div">
+            <!--//-------------------------- connection --------------------------//-->
+            <div id="session_connection">
+                <table class="table table-hover" id="table_connection">
+                    <thead>
+                        <tr class="clickable-row">
+                            <th scope="col">NO.</th>
+                            <th scope="col">Protocol</th>
+                            <th scope="col">Start Time</th>
+                            <th scope="col">Duration (s)</th>
+                            <th scope="col">Src. IP</th>
+                            <th scope="col">Dest. IP</th>
+                            <th scope="col">Src. Port</th>
+                            <th scope="col">Dest. Port</th>
+                            <th scope="col">Packet</th>
+                            <th scope="col">Error</th>
+                            <!-- <th scope="col" class="Maximum_TimeInterval">Maximum_TimeInterval
+                                <img class="visibility" src="./icon/visibility.png" alt="" style="height: 20px;width:20px;">
+                            </th> -->
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_connection">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- //-------------------- packet ----------------------// -->
+            <div id="session_packet" style="display: none;">
+                <table class="table table-hover" id="table_packet">
+                    <thead>
+                        <tr>
+                            <th scope="col">NO.</th>
+                            <th scope="col">Arrival Time</th>
+                            <th scope="col">Protocol</th>
+                            <th scope="col">Src. IP</th>
+                            <th scope="col">Dest. IP</th>
+                            <th scope="col">Src. MAC</th>
+                            <th scope="col">Dest.MAC</th>
+                            <th scope="col">Src Port</th>
+                            <th scope="col">Dest. Port</th>
+                            <th scope="col">Error</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody_packet">
+                    </tbody>
+                </table>
+                <!-- <div id="detail">
+                    <table class="table table-hover" id="packet_detal">
+                        <thead>
+                        <tbody id="tbody_packet_detail">
+                        </tbody>
+                    </table>
+                </div> -->
+            </div>
+
+        </div>
 </body>
 
 </html>
@@ -139,17 +229,62 @@ require_once './session.php';
 
 <script>
     var start = moment().startOf('day').unix();
-    //var start = 1621612800;
     var end = moment().unix();
-    //var end = 1621699199;
     var data = [];
-    var filter = [];
-
+    var filter = {};
+    var filter_connection = {};
+    var filter_packet = {};
+    var type = $(".pick_page.active").attr("value");
+    var limit = {
+        "count": 0,
+        "skip": 0,
+        "end": 200
+    };
+    //----------------get time-----------------------------------------//
+    function get_time(start, end) {
+        filter_connection["Start_Time"] = {};
+        filter_packet["Arrival_Time"] = {};
+        filter_connection["Start_Time"]["$gt"] = start;
+        filter_connection["Start_Time"]["$lt"] = end;
+        filter_packet["Arrival_Time"]["$gt"] = start;
+        filter_packet["Arrival_Time"]["$lt"] = end;
+    }
+    // -----------total_page--------------------------------//
+    function page_total(count) {
+        var total = Math.ceil(count / limit.end);
+        $("#total_page").html(total, " ");
+    }
     //----------------query資料，丟目標位置跟條件------------------------//
     function data_query(target, filter) {
-        var prefix = (target === "connection") ? `process_connection.php?type=${target}&` : `process_packet.php?type=${target}&`;
-        var page = "\$gt=" + start + "&\$lt=" + end + "&" + filter.join("&");
-        $("#main_iframe").attr("src", prefix + page);
+        $("#loading").show();
+        if (target == "connection") {
+            filter = filter_connection;
+        } else if (target == "packet") {
+            filter = filter_packet;
+        }
+        get_time(start, end);
+        $.ajax({
+            type: 'POST',
+            url: 'db_process.php',
+            dataType: 'json',
+            data: {
+                filter: filter,
+                type: target,
+                limit: limit
+            },
+            async: true,
+            success: function(msg) {
+                console.log(msg);
+                $(`#tbody_${type}`).html(msg.data);
+
+                // $('[data-toggle="popover"]').popover()
+                limit.count = msg.count;
+                page_total(msg.count);
+                pages(Math.ceil(limit.count / limit.end));
+                pagination.status(msg.count, limit.end);
+                $("#loading").hide();
+            }
+        });
         chart(start, end);
     }
 
@@ -172,14 +307,13 @@ require_once './session.php';
         return format;
     }
 
-
+    //-------------echart function-------------------------//
     function chart(start, end) {
         $.ajax({
             type: 'POST',
             url: 'echartTest.php',
             data: {
-                start: start,
-                end: end
+                filter: filter_connection
             },
             dataType: "json",
             success: function(msg) {
@@ -242,8 +376,6 @@ require_once './session.php';
                         data: data
                     }]
                 };
-
-                // 使用刚指定的配置项和数据显示图表。
                 myChart.setOption(option);
             }
         });
@@ -251,59 +383,67 @@ require_once './session.php';
 
     $(function() {
 
+        pagination.init();
         //--------------網頁一讀取，先query預設資料---------------------------//
-        data_query("connection", filter);
+        data_query(type, filter);
         //---------------選擇connection還是packet頁面------------------------//
         $(".pick_page").on("click", function() {
             var id = $(this).attr("id");
-            filter = [];
-            $(".pick_page").attr("active", 0);
-            $(`#${id}`).attr("active", 1);
-            data_query($(this).attr("value"), filter);
+            if (id == "conne") {
+                $("#session_packet").css("display", "none");
+                $("#session_connection").css("display", "block");
+                $("#pack").removeClass("active");
+                $("#conne").addClass("active");
+            } else if (id == "pack") {
+                $("#session_connection").css("display", "none");
+                $("#session_packet").css("display", "block");
+                $("#conne").removeClass("active")
+                $("#pack").addClass("active");
+            }
+            type = $(".pick_page.active").attr("value");
+            data_query(type, filter);
         })
-
+        //-----------------時間顯示--------------------------------//
         $('#reportrange').daterangepicker({
             startDate: moment().startOf('day'),
             endDate: moment(),
-            // startDate: "2021-05-22 00:00 ",
-            // endDate: "2021-05-22 23:59",
             showDropdowns: true,
             timePicker: true,
             locale: {
                 format: 'M/DD hh:mm A'
             }
         });
-
+        //------------------選擇時間--------------------//
         $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
-            var type = $(".pick_page[active=1]").attr("value");
+            var type = $(".pick_page.active").attr("value");
             start = Date.parse(picker.startDate.format('YYYY-MM-DD HH:mm')) / 1000;
             end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm')) / 1000;
-
             data_query(type, filter);
         });
-
+        //---------------選擇條件----------------------//
         $("#btn_search").on("click", function() {
-
-            var type = $(".pick_page[active=1]").attr("value");
-            filter = [];
-            if (type == "connection") {
-                $(this).parent().prev().children("input[type=text]").each(function() {
-                    if ($(this).val() != "") {
-                        filter.push($(this).attr('id') + "=" + $(this).val());
-                    }
-                })
-
-
-            } else if (type == "packet") {
-                $(this).parent().prev().children("input[type=text]").each(function() {
-                    if ($(this).val() != "") {
-                        filter.push($(this).attr('name') + "=" + $(this).val());
-                    }
-                })
-            }
+            filter = {};
+            filter_connection = {};
+            filter_packet = {};
+            $(this).parent().prev().children("input[type=text]").each(function() {
+                if ($(this).val() != "") {
+                    filter_connection[$(this).attr("id")] = $(this).val();
+                    filter_packet[$(this).attr("name")] = $(this).val();
+                }
+            });
             data_query(type, filter);
-
         });
+
+        //--------------------監控分頁----------------------------//
+
+        $(".pagination").on("click", ".page-item", function() {
+
+            var value = parseInt($(this).find(".page-link").attr("value"));
+            limit.skip = (value - 1) * limit.end;
+            console.log(value, limit.skip, limit.end);
+            pagination.run($(this), limit.count, limit.end);
+            data_query(type, filter);
+        })
 
 
     });
