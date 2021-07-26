@@ -42,7 +42,7 @@ require_once './session.php';
         #main_div {
             width: 100%;
             overflow: auto;
-            height: calc(100vh - 330px);
+            height: calc(100vh - 350px);
         }
     </style>
 
@@ -59,7 +59,7 @@ require_once './session.php';
                                 <a href="flashball.php"> <img src="./icon/ball.png" alt="home" class="logo"></a>
                                 <a class="nav-link active" href="#">Session</a>
                                 <a class="nav-link" href="./graph_page/index.html">Graph</a>
-                                <a class="nav-link" href="help.php">Help</a>
+                                <!-- <a class="nav-link" href="help.php">Help</a> -->
                             </nav>
                         </div>
                         <div class="col-md-4">
@@ -72,8 +72,8 @@ require_once './session.php';
             <div class="row" style="background-color:cornsilk; box-shadow: 0px 11px 8px -8px #CCC, 0px -11px 8px -10px #CCC;">
                 <div class="col-md-4">
                     <!-- 動態列表啟動暫停 -->
-                    <img src="./icon/play.png" alt="start" class="toolbar">
-                    <img src="./icon/stop.png" alt="stop" class="toolbar">
+                    <!-- <img src="./icon/play.png" alt="start" class="toolbar">
+                    <img src="./icon/stop.png" alt="stop" class="toolbar"> -->
                     <!-- 選擇connection or packet -->
                     <p id="conne" href="" target="" class="select pick_page active" value="connection">connection</p>
                     <label for="">|</label>
@@ -99,7 +99,7 @@ require_once './session.php';
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
         <!-- 欄位選項 -->
-        <div class="row justify-content-betweenw">
+        <div class="row justify-content-betweenw" style="margin-top:10px">
             <div>
                 <select id="select_col" class="form-control" style="width: 20px;">
                     <option>Maximum_TimeInterval</option>
@@ -114,21 +114,23 @@ require_once './session.php';
                     <option>Average_bytes</option>
                 </select>
             </div>
-            <div style="display: grid; grid-template-columns:auto auto auto">
+            <div style="display: grid; grid-template-columns:auto auto auto auto">
                 <?php require_once './pagination.php' ?>
-                <div style="margin-top: 10px;margin-left:10px">
+                <div style="margin: 10px 10px 0px 10px">
                     <a id="total_page"></a>
-                    <label>pages </label>
+                    <label>pages</label>
                 </div>
-
+                <div id="resetPacket" style="display:none">
+                    <button id="reset" class="btn btn-secondary">back to packet list</button>
+                </div>
             </div>
-
         </div>
         <div class="d-flex justify-content-center">
             <div class="spinner-border text-primary" role="status" id="loading">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
+
         <!--  -->
         <!-- 主頁div -->
         <!--  -->
@@ -161,31 +163,35 @@ require_once './session.php';
 
             <!-- //-------------------- packet ----------------------// -->
             <div id="session_packet" style="display: none;">
-                <table class="table table-hover" id="table_packet">
-                    <thead>
-                        <tr>
-                            <th scope="col">NO.</th>
-                            <th scope="col">Arrival Time</th>
-                            <th scope="col">Protocol</th>
-                            <th scope="col">Src. IP</th>
-                            <th scope="col">Dest. IP</th>
-                            <th scope="col">Src. MAC</th>
-                            <th scope="col">Dest.MAC</th>
-                            <th scope="col">Src Port</th>
-                            <th scope="col">Dest. Port</th>
-                            <th scope="col">Error</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody_packet">
-                    </tbody>
-                </table>
-                <!-- <div id="detail">
+                <div id="main_packet" style="height:360px;overflow:auto">
+                    <table class="table table-hover" id="table_packet">
+                        <thead>
+                            <tr>
+                                <th scope="col">NO.</th>
+                                <th scope="col">Arrival Time</th>
+                                <th scope="col">Protocol</th>
+                                <th scope="col">Src. IP</th>
+                                <th scope="col">Dest. IP</th>
+                                <th scope="col">Src. MAC</th>
+                                <th scope="col">Dest.MAC</th>
+                                <th scope="col">Src Port</th>
+                                <th scope="col">Dest. Port</th>
+                                <th scope="col">Error</th>
+                            </tr>
+                            </thead>
+                        <tbody id="tbody_packet">
+                        </tbody>
+                    </table>
+                 </div>
+
+                <div id="detail">
                     <table class="table table-hover" id="packet_detal">
                         <thead>
+                        </thead>
                         <tbody id="tbody_packet_detail">
                         </tbody>
                     </table>
-                </div> -->
+                </div>
             </div>
 
         </div>
@@ -225,7 +231,6 @@ require_once './session.php';
         </div>
     </div>
 </div>
-
 
 <script>
     var start = moment().startOf('day').unix();
@@ -381,8 +386,9 @@ require_once './session.php';
         });
     }
 
-    $(function() {
 
+
+    $(function() {
         pagination.init();
         //--------------網頁一讀取，先query預設資料---------------------------//
         data_query(type, filter);
@@ -394,11 +400,13 @@ require_once './session.php';
                 $("#session_connection").css("display", "block");
                 $("#pack").removeClass("active");
                 $("#conne").addClass("active");
+                $("#resetPacket").css("display","none");
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
                 $("#session_packet").css("display", "block");
                 $("#conne").removeClass("active")
                 $("#pack").addClass("active");
+                $("#resetPacket").css("display","block");
             }
             type = $(".pick_page.active").attr("value");
             data_query(type, filter);
@@ -437,14 +445,47 @@ require_once './session.php';
         //--------------------監控分頁----------------------------//
 
         $(".pagination").on("click", ".page-item", function() {
-
-            var value = parseInt($(this).find(".page-link").attr("value"));
-            limit.skip = (value - 1) * limit.end;
-            console.log(value, limit.skip, limit.end);
-            pagination.run($(this), limit.count, limit.end);
-            data_query(type, filter);
+            var classList = $(this).attr("class").split(" ");
+            if (classList.indexOf("disabled") == -1) {
+                var value = parseInt($(this).find(".page-link").attr("value"));
+                limit.skip = (value - 1) * limit.end;
+                console.log(value, limit.skip, limit.end);
+                pagination.run($(this), limit.count, limit.end);
+                data_query(type, filter);
+            }
         })
+        // -----------------------------------------------------//
+        $("tbody").on("click",".connectionToPacket",function(){
+            var fKey = $(this).attr("value");
+            type = "packet";
+            filter_packet["Foreign_Key"] = fKey;
+            data_query(type,filter);
+            $("#pack").trigger("click");
+        })
+        //--------------------------------------------------------//
+        $("#reset").on("click",function(){
+            delete filter_packet["Foreign_Key"];
+            console.log(filter_packet);
+            data_query(type,filter);
+        })
+        $("#tbody_packet").on("click","tr",function(){
+            var pid = $(this).attr("pid");
 
+            $.ajax({
+                type: 'POST',
+                url: 'db_process.php',
+                dataType: 'json',
+                data: {
+                    pid : pid,
+                    type : "PacketToDetail"
+                },
+                async: true,
+                success: function(msg) {
+                    console.log(msg);
+                    $("#tbody_packet_detail").html(msg);
+                }
+            });
+        })
 
     });
 </script>

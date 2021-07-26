@@ -1,7 +1,7 @@
 <?php
 set_time_limit(3000);
-// ini_set('display_errors', '1');
-// error_reporting(E_ALL);
+    // ini_set('display_errors', '1');
+    // error_reporting(E_ALL);
 
 use function PHPSTORM_META\type;
 
@@ -47,15 +47,16 @@ if ($type == "connection") {
                         <td>' . $DestinationIP . '</td>
                         <td>' . $row['Source_Port'] . '</td>
                         <td>' . $row['Destination_Port'] . '</td>
-                        <td><a href=\'./ConnToPacket.php?key_conn=' . $id . '\'>' . $packet . '</a></td>
+                        <td><i class="connectionToPacket" value = "'.$id.'" style="cursor:pointer;color:blue">' . $packet . '</i></td>
                         <td>' . $color . '</td>
                         </tr>';
     }
-    echo json_encode(array("data" => $str, "count" => $document_count));
+    echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id));
 } elseif ($type == "packet") {
     $filter["Arrival_Time"]['$gt'] = intval($filter["Arrival_Time"]['$gt']);
     $filter["Arrival_Time"]['$lt'] = intval($filter["Arrival_Time"]['$lt']);
     $str = "";
+    $detail_str = "";
     $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
     $document = $collection->find($filter, $option);
     $document_count = $collection->count($filter);
@@ -89,85 +90,44 @@ if ($type == "connection") {
                         </tr>';
     }
     echo json_encode(array("data" => $str, "count" => $document_count));
-} //elseif ($type == "ConnToPacket") {
-//     $id = $_POST["id"];
-//     $str = "";
-//     $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
-//     $document = $collection->find(['Foreign_Key' => $id]);
-//     foreach ($document as $index => $row) {
-//         $Pid = $row["_id"];
-//         $SourceIP = long2ip($row['Third_Layer']['Source_IP']);
-//         $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
-//         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
-//         $type = "TCP";
+} elseif ($type == "PacketToDetail") {
+    $id = $_POST["pid"];
+    $str = "";
+    $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
+    $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
+    foreach ($document as $index => $row) {
+        $SourceIP = long2ip($row['Third_Layer']['Source_IP']);
+        $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
+        $packet = $row['A2Bpacket'] + $row['B2Apacket'];
+        $relative = floor($row["Relative_Time"] * 1000) / 1000;
+        $sourceMac = $row['Second_Layer']['Source_MAC'][0] . $row['Second_Layer']['Source_MAC'][1] . ':' . $row['Second_Layer']['Source_MAC'][2] . $row['Second_Layer']['Source_MAC'][3] . ':' . $row['Second_Layer']['Source_MAC'][4] . $row['Second_Layer']['Source_MAC'][5] . ':' . $row['Second_Layer']['Source_MAC'][6] . $row['Second_Layer']['Source_MAC'][7] . ':' . $row['Second_Layer']['Source_MAC'][8] . $row['Second_Layer']['Source_MAC'][9] . ':' . $row['Second_Layer']['Source_MAC'][10] . $row['Second_Layer']['Source_MAC'][11];
+        $destinationMac = $row['Second_Layer']['Destination_MAC'][0] . $row['Second_Layer']['Destination_MAC'][1] . ':' . $row['Second_Layer']['Destination_MAC'][2] . $row['Second_Layer']['Destination_MAC'][3] . ':' . $row['Second_Layer']['Destination_MAC'][4] . $row['Second_Layer']['Destination_MAC'][5] . ':' . $row['Second_Layer']['Destination_MAC'][6] . $row['Second_Layer']['Destination_MAC'][7] . ':' . $row['Second_Layer']['Destination_MAC'][8] . $row['Second_Layer']['Destination_MAC'][9] . ':' . $row['Second_Layer']['Destination_MAC'][10] . $row['Second_Layer']['Destination_MAC'][11];
 
-//         $type = protocol($row["Protocol"])["str"];
-//         $ms = explode(".", $row['Arrival_Time']);
+        $type = protocol($row["Protocol"])["str"];
+        $test = $row['_id'];
+        $ms = explode(".", $row['Arrival_Time']);
 
-//         $sourceMac = $row['Second_Layer']['Source_MAC'][0] . $row['Second_Layer']['Source_MAC'][1] . ':' . $row['Second_Layer']['Source_MAC'][2] . $row['Second_Layer']['Source_MAC'][3] . ':' . $row['Second_Layer']['Source_MAC'][4] . $row['Second_Layer']['Source_MAC'][5] . ':' . $row['Second_Layer']['Source_MAC'][6] . $row['Second_Layer']['Source_MAC'][7] . ':' . $row['Second_Layer']['Source_MAC'][8] . $row['Second_Layer']['Source_MAC'][9] . ':' . $row['Second_Layer']['Source_MAC'][10] . $row['Second_Layer']['Source_MAC'][11];
-//         $destinationMac = $row['Second_Layer']['Destination_MAC'][0] . $row['Second_Layer']['Destination_MAC'][1] . ':' . $row['Second_Layer']['Destination_MAC'][2] . $row['Second_Layer']['Destination_MAC'][3] . ':' . $row['Second_Layer']['Destination_MAC'][4] . $row['Second_Layer']['Destination_MAC'][5] . ':' . $row['Second_Layer']['Destination_MAC'][6] . $row['Second_Layer']['Destination_MAC'][7] . ':' . $row['Second_Layer']['Destination_MAC'][8] . $row['Second_Layer']['Destination_MAC'][9] . ':' . $row['Second_Layer']['Destination_MAC'][10] . $row['Second_Layer']['Destination_MAC'][11];
-
-//         $error = [];
-//         for ($i = 0; $i < 11; $i++) {
-//             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
-//         }
-//         $show = showPktError($error);
-
-//         $str .= '<tr id="toto" pid = "' . $Pid . '">
-//                     <td>' . ($index + 1) . '</td>
-//                     <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
-//                     <td>' . $type . '</td>
-//                     <td>' . $SourceIP . '</td>
-//                     <td>' . $DestinationIP . '</td>
-//                     <td>' . $sourceMac . '</td>
-//                     <td>' . $destinationMac . '</td>
-//                     <td>' . $row['Fourth_Layer']['Source_Port'] . '</td>
-//                     <td>' . $row['Fourth_Layer']['Destination_Port'] . '</td>
-//                     <td>' . $show . '</td>
-//                     </tr>';
-
-//         //var_dump($row['Connection_Type'])
-//     }
-//     echo $str;
-// } elseif ($type == "PacketToDetail") {
-//     $id = $_POST["_id"];
-//     $str = "";
-//     $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
-//     $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
-//     foreach ($document as $index => $row) {
-//         $SourceIP = long2ip($row['Third_Layer']['Source_IP']);
-//         $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
-//         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
-//         $relative = floor($row["Relative_Time"] * 1000) / 1000;
-//         $sourceMac = $row['Second_Layer']['Source_MAC'][0] . $row['Second_Layer']['Source_MAC'][1] . ':' . $row['Second_Layer']['Source_MAC'][2] . $row['Second_Layer']['Source_MAC'][3] . ':' . $row['Second_Layer']['Source_MAC'][4] . $row['Second_Layer']['Source_MAC'][5] . ':' . $row['Second_Layer']['Source_MAC'][6] . $row['Second_Layer']['Source_MAC'][7] . ':' . $row['Second_Layer']['Source_MAC'][8] . $row['Second_Layer']['Source_MAC'][9] . ':' . $row['Second_Layer']['Source_MAC'][10] . $row['Second_Layer']['Source_MAC'][11];
-//         $destinationMac = $row['Second_Layer']['Destination_MAC'][0] . $row['Second_Layer']['Destination_MAC'][1] . ':' . $row['Second_Layer']['Destination_MAC'][2] . $row['Second_Layer']['Destination_MAC'][3] . ':' . $row['Second_Layer']['Destination_MAC'][4] . $row['Second_Layer']['Destination_MAC'][5] . ':' . $row['Second_Layer']['Destination_MAC'][6] . $row['Second_Layer']['Destination_MAC'][7] . ':' . $row['Second_Layer']['Destination_MAC'][8] . $row['Second_Layer']['Destination_MAC'][9] . ':' . $row['Second_Layer']['Destination_MAC'][10] . $row['Second_Layer']['Destination_MAC'][11];
-
-//         $type = protocol($row["Protocol"])["str"];
-
-//         $test = $row['_id'];
-//         $ms = explode(".", $row['Arrival_Time']);
-
-//         $str .=
-//             '<tr>
-//                 <th scope="col">Length</th>
-//                 <th scope="col">Arrival Time</th>
-//                 <th scope="col">Relative Time</th>
-//                 <th scope="col">Protocol</th>
-//                 <th scope="col">Source MAC</th>
-//                 <th scope="col">Destination MAC</th>
-//                 <th scope="col">Source IP</th>
-//                 <th scope="col">Destination IP</th>
-//             </tr>
-//             <tr>
-//             <td>' . $row['Len'] . '</td>
-//             <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
-//             <td>' . $relative . '</td>
-//             <td>' . $type . '</td>
-//             <td>' . $sourceMac . '</td>
-//             <td>' . $destinationMac . '</td>
-//             <td>' . $SourceIP . '</td>
-//             <td>' . $DestinationIP . '</td>
-//             </tr>';
-//     }
-//     echo $str;
-// }
+        $str .=
+            '<tr>
+                <th scope="col">Length</th>
+                <th scope="col">Arrival Time</th>
+                <th scope="col">Relative Time</th>
+                <th scope="col">Protocol</th>
+                <th scope="col">Source MAC</th>
+                <th scope="col">Destination MAC</th>
+                <th scope="col">Source IP</th>
+                <th scope="col">Destination IP</th>
+            </tr>
+            <tr>
+            <td>' . $row['Len'] . '</td>
+            <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
+            <td>' . $relative . '</td>
+            <td>' . $type . '</td>
+            <td>' . $sourceMac . '</td>
+            <td>' . $destinationMac . '</td>
+            <td>' . $SourceIP . '</td>
+            <td>' . $DestinationIP . '</td>
+            </tr>';
+    }
+    echo json_encode($str);
+}
