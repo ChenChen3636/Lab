@@ -1,0 +1,286 @@
+[
+	{
+		"date": "2021-07-02",
+		"details": [
+			{
+				"name": "Mon",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"date": "null",
+				"value": 0
+			}
+		],
+		"conBytes": 136303842,
+		"summary": [
+			{
+				"name": "Mon",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"value": 0
+			}
+		]
+	},
+	{
+		"date": "2021-07-03",
+		"details": [
+			{
+				"name": "Mon",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"date": "null",
+				"value": 0
+			}
+		],
+		"conBytes": 185212717,
+		"summary": [
+			{
+				"name": "Mon",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"value": 0
+			}
+		]
+	},
+	{
+		"date": "2021-07-04",
+		"details": [
+			{
+				"name": "Mon",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"date": "null",
+				"value": 0
+			}
+		],
+		"conBytes": 31548837,
+		"summary": [
+			{
+				"name": "Mon",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"value": 0
+			}
+		]
+	},
+	{
+		"date": "2021-07-16",
+		"details": [
+			{
+				"name": "Mon",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"date": "null",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"date": "null",
+				"value": 0
+			}
+		],
+		"conBytes": 77051471,
+		"summary": [
+			{
+				"name": "Mon",
+				"value": 0
+			},
+			{
+				"name": "Tue",
+				"value": 0
+			},
+			{
+				"name": "Wed",
+				"value": 0
+			},
+			{
+				"name": "Thu",
+				"value": 0
+			},
+			{
+				"name": "Fri",
+				"value": 0
+			},
+			{
+				"name": "Sat",
+				"value": 0
+			},
+			{
+				"name": "Sun",
+				"value": 0
+			}
+		]
+	}
+]

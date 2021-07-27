@@ -1,0 +1,47 @@
+{
+    "name": "Frame",
+    "children": [
+        {
+            "name": "Ethernet",
+            "children": [
+                {
+                    "name": "Internet Protocol Version 6",
+                    "children": [
+                        {"name": "Internet Control Message Protocol", "size": 1.1}
+                    ]
+                },
+                {
+                    "name": "Internet Protocol Version 4",
+                    "children": [
+                        {
+                            "name": "User Datagram Protocol",
+                            "children": [
+                                {"name": "Network Time Protocol", "size": 11.6},
+                                {"name": "Domain Name System", "size": 4.2},
+                                {"name": "Bootstrap Protocol", "size": 27.5}
+                            ]
+                        },
+                        {
+                            "name": "Transmission Control Protocol",
+                            "children": [
+                                {"name": "Secure Sockets Layer", "size": 5.3},
+                                {
+                                    "name": "Hypertext Transfer Protocol",
+                                    "children": [
+                                        {"name": "JavaScript Object Notation", "size": 1.1},
+                                        {"name": "HTML Form URL Encoded", "size": 1.1}
+                                    ]
+                                },
+                                {"name": "Data", "size": 2.1}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "Address Resolution Protocol",
+                    "size": 6.9
+                }
+            ]
+        }
+    ]
+}

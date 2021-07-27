@@ -13,10 +13,6 @@
 
         }
 
-        .active {
-            color: darkslategrey;
-        }
-
         .logo {
             width: 30px;
             height: 30px;
@@ -33,9 +29,15 @@
             line-height: 20px;
 
         }
+        .nav-link {
+            color: black;
+        }
 
-        a {
-            color: #fff
+        .nav-link.active {
+            background-color: wheat;
+        }
+        .g_link:active{
+            background-color: wheat;
         }
 
         .search {
@@ -45,4 +47,19 @@
             color: black;
             display: inline-block;
             cursor: pointer;
+        }
+        .pick_page{
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+        .pick_page.active{
+            background-color: wheat ;
+        }
+        .connectionToPacket{
+           cursor: pointer;
+           color: blue;
+        }
+        .table td,.table th{
+            text-align: center;
+            vertical-align: inherit;
         }

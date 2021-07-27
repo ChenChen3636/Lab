@@ -5,7 +5,7 @@
     </li>
     <li class="page-item disabled" id="prevPage">
         <a class="page-link" href="###" value="1"><i class="fas fa-chevron-up"></i>
-            < </a>
+        < </a>
     </li>
     <li class="page-item active">
         <a class="page-link" href="###" value="1">1</a>
@@ -31,7 +31,7 @@
 </ul>
 
 <script>
-    function pages(count) {
+    function final_page(count) {
         $("#lastPage").children(".page-link").attr("value", count);
     }
     var Pagination = function() {

@@ -17,12 +17,11 @@ require_once './session.php';
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
 
     <!-- jQuery and JS bundle w/ Popper.js -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
 
     <!-- time -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
@@ -47,7 +46,6 @@ require_once './session.php';
     </style>
 
 </head>
-
 <body>
     <div class="container-fluid">
         <div style="position: fixed; z-index:2; width:99%;">
@@ -99,7 +97,7 @@ require_once './session.php';
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
         <!-- 欄位選項 -->
-        <div class="row justify-content-betweenw" style="margin-top:10px">
+        <div class="row" style="margin-top:10px">
             <div>
                 <select id="select_col" class="form-control" style="width: 20px;">
                     <option>Maximum_TimeInterval</option>
@@ -114,7 +112,7 @@ require_once './session.php';
                     <option>Average_bytes</option>
                 </select>
             </div>
-            <div style="display: grid; grid-template-columns:auto auto auto auto">
+            <div style="display: grid; grid-template-columns:auto auto auto auto;">
                 <?php require_once './pagination.php' ?>
                 <div style="margin: 10px 10px 0px 10px">
                     <a id="total_page"></a>
@@ -200,7 +198,7 @@ require_once './session.php';
 </html>
 
 
-<!-- Modal -->
+<!-- 條件搜尋的Modal -->
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -239,13 +237,20 @@ require_once './session.php';
     var filter = {};
     var filter_connection = {};
     var filter_packet = {};
+    var page_status ={
+        "connection" : 1,
+        "packet" : 1
+    }
     var type = $(".pick_page.active").attr("value");
     var limit = {
         "count": 0,
         "skip": 0,
         "end": 200
     };
-    //----------------get time-----------------------------------------//
+
+    /** ------------------------------------------------------*
+     * get time
+    /** ------------------------------------------------------*/
     function get_time(start, end) {
         filter_connection["Start_Time"] = {};
         filter_packet["Arrival_Time"] = {};
@@ -254,12 +259,23 @@ require_once './session.php';
         filter_packet["Arrival_Time"]["$gt"] = start;
         filter_packet["Arrival_Time"]["$lt"] = end;
     }
-    // -----------total_page--------------------------------//
+    /** ------------------------------------------------------*
+     * total page
+    /** ------------------------------------------------------*/
     function page_total(count) {
         var total = Math.ceil(count / limit.end);
         $("#total_page").html(total, " ");
     }
-    //----------------query資料，丟目標位置跟條件------------------------//
+    /** ------------------------------------------------------*
+     * 歸零分頁
+    /** ------------------------------------------------------*/
+    function reset_page(){
+        pagination.init();
+        limit.skip = 0;
+    }
+    /** ------------------------------------------------------*
+     * query資料，丟目標位置跟條件
+    /** ------------------------------------------------------*/
     function data_query(target, filter) {
         $("#loading").show();
         if (target == "connection") {
@@ -281,11 +297,10 @@ require_once './session.php';
             success: function(msg) {
                 console.log(msg);
                 $(`#tbody_${type}`).html(msg.data);
-
-                // $('[data-toggle="popover"]').popover()
+                $('[data-toggle="popover"]').popover()
                 limit.count = msg.count;
+                final_page(Math.ceil(limit.count/limit.end))
                 page_total(msg.count);
-                pages(Math.ceil(limit.count / limit.end));
                 pagination.status(msg.count, limit.end);
                 $("#loading").hide();
             }
@@ -293,7 +308,9 @@ require_once './session.php';
         chart(start, end);
     }
 
-    //----------------轉換timestamp to date------------------------------//
+    /** ------------------------------------------------------*
+     * 轉換timestamp to date
+    /** ------------------------------------------------------*/
     function timestamp_to_date(timestamp) {
         var newdate = [];
         var Month = [];
@@ -312,7 +329,9 @@ require_once './session.php';
         return format;
     }
 
-    //-------------echart function-------------------------//
+    /** ------------------------------------------------------*
+     * echart function
+    /** ------------------------------------------------------*/
     function chart(start, end) {
         $.ajax({
             type: 'POST',
@@ -390,9 +409,13 @@ require_once './session.php';
 
     $(function() {
         pagination.init();
-        //--------------網頁一讀取，先query預設資料---------------------------//
+        /** ------------------------------------------------------*
+         * 網頁一讀取，先query預設資料
+        /** ------------------------------------------------------*/
         data_query(type, filter);
-        //---------------選擇connection還是packet頁面------------------------//
+        /** ------------------------------------------------------*
+         * 選擇connection還是packet頁面
+        /** ------------------------------------------------------*/
         $(".pick_page").on("click", function() {
             var id = $(this).attr("id");
             if (id == "conne") {
@@ -401,17 +424,26 @@ require_once './session.php';
                 $("#pack").removeClass("active");
                 $("#conne").addClass("active");
                 $("#resetPacket").css("display","none");
+                $("#midPage").find(".page-link").attr("value",page_status.connection);
+                limit.skip = (page_status.connection * limit.end);
+                pagination.run($("#midPage"),limit.count,limit.end);
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
                 $("#session_packet").css("display", "block");
                 $("#conne").removeClass("active")
                 $("#pack").addClass("active");
                 $("#resetPacket").css("display","block");
+                page_status.connection = $(".page-item.active>.page-link").attr("value");
+                limit.skip = 0;
+                pagination.init();
             }
             type = $(".pick_page.active").attr("value");
+
             data_query(type, filter);
         })
-        //-----------------時間顯示--------------------------------//
+        /** ------------------------------------------------------*
+         * 時間顯示
+        /** ------------------------------------------------------*/
         $('#reportrange').daterangepicker({
             startDate: moment().startOf('day'),
             endDate: moment(),
@@ -421,14 +453,19 @@ require_once './session.php';
                 format: 'M/DD hh:mm A'
             }
         });
-        //------------------選擇時間--------------------//
+        /** ------------------------------------------------------*
+         * 選擇時間
+        /** ------------------------------------------------------*/
         $('#reportrange').on('apply.daterangepicker', function(ev, picker) {
             var type = $(".pick_page.active").attr("value");
             start = Date.parse(picker.startDate.format('YYYY-MM-DD HH:mm')) / 1000;
             end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm')) / 1000;
+            reset_page();
             data_query(type, filter);
         });
-        //---------------選擇條件----------------------//
+        /** ------------------------------------------------------*
+         * 選擇條件
+        /** ------------------------------------------------------*/
         $("#btn_search").on("click", function() {
             filter = {};
             filter_connection = {};
@@ -439,10 +476,13 @@ require_once './session.php';
                     filter_packet[$(this).attr("name")] = $(this).val();
                 }
             });
+            reset_page();
             data_query(type, filter);
         });
 
-        //--------------------監控分頁----------------------------//
+       /** ------------------------------------------------------*
+        * 監控分頁
+       /** ------------------------------------------------------*/
 
         $(".pagination").on("click", ".page-item", function() {
             var classList = $(this).attr("class").split(" ");
@@ -453,8 +493,11 @@ require_once './session.php';
                 pagination.run($(this), limit.count, limit.end);
                 data_query(type, filter);
             }
+
         })
-        // -----------------------------------------------------//
+        /** ------------------------------------------------------*
+         * onnection連到packet
+        /** ------------------------------------------------------*/
         $("tbody").on("click",".connectionToPacket",function(){
             var fKey = $(this).attr("value");
             type = "packet";
@@ -462,14 +505,21 @@ require_once './session.php';
             data_query(type,filter);
             $("#pack").trigger("click");
         })
-        //--------------------------------------------------------//
+        /** ------------------------------------------------------*
+         * 拿掉packet的foreign key 條件
+        /** ------------------------------------------------------*/
         $("#reset").on("click",function(){
             delete filter_packet["Foreign_Key"];
             console.log(filter_packet);
             data_query(type,filter);
+            $("#tbody_packet_detail").empty();
         })
+        /** ------------------------------------------------------*
+         * packet的detail
+        /** ------------------------------------------------------*/
         $("#tbody_packet").on("click","tr",function(){
             var pid = $(this).attr("pid");
+            var num = $(this).attr("num");
 
             $.ajax({
                 type: 'POST',
@@ -477,6 +527,7 @@ require_once './session.php';
                 dataType: 'json',
                 data: {
                     pid : pid,
+                    num : num,
                     type : "PacketToDetail"
                 },
                 async: true,
@@ -488,4 +539,5 @@ require_once './session.php';
         })
 
     });
+
 </script>

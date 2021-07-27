@@ -8,13 +8,16 @@ function converse_filter_type($filter)
             if ($key == "Source_IP" || $key == "Destination_IP") {
                 $filter[$key] = ip2long($filter[$key]);
             } else if ($key == "Third_Layer-Source_IP" || $key == "Third_Layer-Destination_IP") {
-                $key = str_replace("-", ".", $key);
-                $filter[$key] = ip2long($filter[$key]);
-            } else if ($key == "Fourth_Layer-Source_Port" || $key == "Fourth_Layer-Destination_Port") {
-                $key = str_replace("-", ".", $key);
+                $newkey = str_replace("-", ".", $key);
+                $filter[$newkey] = ip2long($filter[$key]);
+                unset($filter[$key]);
+             } else if ($key == "Fourth_Layer-Source_Port" || $key == "Fourth_Layer-Destination_Port") {
+                $newkey = str_replace("-", ".", $key);
+                $filter[$newkey] = intval($filter[$key]);
+                unset($filter[$key]);
+            }else{
                 $filter[$key] = intval($filter[$key]);
             }
-            $filter[$key] = intval($filter[$key]);
         }
     }
     foreach ($strList as $index => $key) {

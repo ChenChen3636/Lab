@@ -75,9 +75,10 @@ if ($type == "connection") {
             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
         }
         $show = showPktError($error);
+        $num = ($index + 1 + $limit["skip"]);
 
-        $str .= '<tr pid = "' . $Pid . '">
-                        <td>' . ($index + 1 + $limit["skip"]) . '</td>
+        $str .= '<tr pid = "' . $Pid . '" num = "'.$num.'">
+                        <td>' . $num . '</td>
                         <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
                         <td>' . $protocol . '</td>
                         <td>' . $SourceIP . '</td>
@@ -92,6 +93,7 @@ if ($type == "connection") {
     echo json_encode(array("data" => $str, "count" => $document_count));
 } elseif ($type == "PacketToDetail") {
     $id = $_POST["pid"];
+    $num = $_POST["num"];
     $str = "";
     $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
     $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
@@ -109,6 +111,7 @@ if ($type == "connection") {
 
         $str .=
             '<tr>
+                <th scope="col">No.</th>
                 <th scope="col">Length</th>
                 <th scope="col">Arrival Time</th>
                 <th scope="col">Relative Time</th>
@@ -119,6 +122,7 @@ if ($type == "connection") {
                 <th scope="col">Destination IP</th>
             </tr>
             <tr>
+            <td>' . $num .'</td>
             <td>' . $row['Len'] . '</td>
             <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
             <td>' . $relative . '</td>
