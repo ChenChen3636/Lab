@@ -11,11 +11,13 @@ $type = $_POST["type"];
 $limit = $_POST["limit"];
 $filter = $_POST["filter"];
 $filter = converse_filter_type($filter);
-//var_dump($filter);
 $option = [];
 $option["limit"] = intval($limit["end"]);
 $option["skip"] = intval($limit["skip"]);
 
+/** ------------------------------------------------------*
+ * connection db query
+ ** ------------------------------------------------------*/
 if ($type == "connection") {
     $filter["Start_Time"]['$gt'] = intval($filter["Start_Time"]['$gt']);
     $filter["Start_Time"]['$lt'] = intval($filter["Start_Time"]['$lt']);
@@ -49,9 +51,22 @@ if ($type == "connection") {
                         <td>' . $row['Destination_Port'] . '</td>
                         <td><i class="connectionToPacket" value = "'.$id.'" style="cursor:pointer;color:blue">' . $packet . '</i></td>
                         <td>' . $color . '</td>
+                        <td class="Maximum_TimeInterval">' .$row["Maximum_TimeInterval"]. '</td>
+                        <td class="Minimum_TimeInterval">' .$row["Minimum_TimeInterval"]. '</td>
+                        <td class="Average_TimeInterval">' .$row["Average_TimeInterval"]. '</td>
+                        <td class="Maximum_A2Bbytes">' .$row["Maximum_A2Bbytes"]. '</td>
+                        <td class="Maximum_B2Abytes">' .$row["Maximum_B2Abytes"]. '</td>
+                        <td class="Minimum_A2Bbytes">' .$row["Minimum_A2Bbytes"]. '</td>
+                        <td class="Minimum_B2Abytes">' .$row["Minimum_B2Abytes"]. '</td>
+                        <td class="Maximum_bytes">' .$row["Maximum_bytes"]. '</td>
+                        <td class="Minimum_bytes">' .$row["Minimum_bytes"]. '</td>
+                        <td class="Average_bytes">' .$row["Average_bytes"]. '</td>
                         </tr>';
     }
     echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id));
+/** ------------------------------------------------------*
+ * packet db query
+ ** ------------------------------------------------------*/
 } elseif ($type == "packet") {
     $filter["Arrival_Time"]['$gt'] = intval($filter["Arrival_Time"]['$gt']);
     $filter["Arrival_Time"]['$lt'] = intval($filter["Arrival_Time"]['$lt']);
@@ -68,9 +83,8 @@ if ($type == "connection") {
         $protocol = protocol($row["Protocol"])["str"];
         $error = [];
         $ms = explode(".", $row['Arrival_Time']);
-        $sourceMac = $row['Second_Layer']['Source_MAC'][0] . $row['Second_Layer']['Source_MAC'][1] . ':' . $row['Second_Layer']['Source_MAC'][2] . $row['Second_Layer']['Source_MAC'][3] . ':' . $row['Second_Layer']['Source_MAC'][4] . $row['Second_Layer']['Source_MAC'][5] . ':' . $row['Second_Layer']['Source_MAC'][6] . $row['Second_Layer']['Source_MAC'][7] . ':' . $row['Second_Layer']['Source_MAC'][8] . $row['Second_Layer']['Source_MAC'][9] . ':' . $row['Second_Layer']['Source_MAC'][10] . $row['Second_Layer']['Source_MAC'][11];
-        $destinationMac = $row['Second_Layer']['Destination_MAC'][0] . $row['Second_Layer']['Destination_MAC'][1] . ':' . $row['Second_Layer']['Destination_MAC'][2] . $row['Second_Layer']['Destination_MAC'][3] . ':' . $row['Second_Layer']['Destination_MAC'][4] . $row['Second_Layer']['Destination_MAC'][5] . ':' . $row['Second_Layer']['Destination_MAC'][6] . $row['Second_Layer']['Destination_MAC'][7] . ':' . $row['Second_Layer']['Destination_MAC'][8] . $row['Second_Layer']['Destination_MAC'][9] . ':' . $row['Second_Layer']['Destination_MAC'][10] . $row['Second_Layer']['Destination_MAC'][11];
-
+        $sourceMac = port($row['Second_Layer']['Source_MAC']);
+        $destinationMac = port($row['Second_Layer']['Destination_MAC']);
         for ($i = 0; $i < 11; $i++) {
             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
         }
@@ -91,6 +105,9 @@ if ($type == "connection") {
                         </tr>';
     }
     echo json_encode(array("data" => $str, "count" => $document_count));
+/** ------------------------------------------------------*
+ * packet's detail db query
+ ** ------------------------------------------------------*/
 } elseif ($type == "PacketToDetail") {
     $id = $_POST["pid"];
     $num = $_POST["num"];
@@ -102,12 +119,15 @@ if ($type == "connection") {
         $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
         $relative = floor($row["Relative_Time"] * 1000) / 1000;
-        $sourceMac = $row['Second_Layer']['Source_MAC'][0] . $row['Second_Layer']['Source_MAC'][1] . ':' . $row['Second_Layer']['Source_MAC'][2] . $row['Second_Layer']['Source_MAC'][3] . ':' . $row['Second_Layer']['Source_MAC'][4] . $row['Second_Layer']['Source_MAC'][5] . ':' . $row['Second_Layer']['Source_MAC'][6] . $row['Second_Layer']['Source_MAC'][7] . ':' . $row['Second_Layer']['Source_MAC'][8] . $row['Second_Layer']['Source_MAC'][9] . ':' . $row['Second_Layer']['Source_MAC'][10] . $row['Second_Layer']['Source_MAC'][11];
-        $destinationMac = $row['Second_Layer']['Destination_MAC'][0] . $row['Second_Layer']['Destination_MAC'][1] . ':' . $row['Second_Layer']['Destination_MAC'][2] . $row['Second_Layer']['Destination_MAC'][3] . ':' . $row['Second_Layer']['Destination_MAC'][4] . $row['Second_Layer']['Destination_MAC'][5] . ':' . $row['Second_Layer']['Destination_MAC'][6] . $row['Second_Layer']['Destination_MAC'][7] . ':' . $row['Second_Layer']['Destination_MAC'][8] . $row['Second_Layer']['Destination_MAC'][9] . ':' . $row['Second_Layer']['Destination_MAC'][10] . $row['Second_Layer']['Destination_MAC'][11];
-
+        $sourceMac = port($row['Second_Layer']['Source_MAC']);
+        $destinationMac = port($row['Second_Layer']['Destination_MAC']);
         $type = protocol($row["Protocol"])["str"];
         $test = $row['_id'];
         $ms = explode(".", $row['Arrival_Time']);
+        for ($i = 0; $i < 11; $i++) {
+            $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
+        }
+        $show = showPktError($error);
 
         $str .=
             '<tr>
@@ -120,6 +140,7 @@ if ($type == "connection") {
                 <th scope="col">Destination MAC</th>
                 <th scope="col">Source IP</th>
                 <th scope="col">Destination IP</th>
+                <th scope="col">Error</th>
             </tr>
             <tr>
             <td>' . $num .'</td>
@@ -131,6 +152,7 @@ if ($type == "connection") {
             <td>' . $destinationMac . '</td>
             <td>' . $SourceIP . '</td>
             <td>' . $DestinationIP . '</td>
+            <td>' . $show.'</td>
             </tr>';
     }
     echo json_encode($str);

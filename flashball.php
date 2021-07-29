@@ -43,6 +43,27 @@ require_once './session.php';
             overflow: auto;
             height: calc(100vh - 350px);
         }
+        .hide {
+            display: none;
+        }
+        .dropdown-menu>label {
+            display:block;
+            margin:0;
+            line-height:10px;
+            left: 10px;
+        }
+        [type="checkbox"] {
+            position: relative;
+            top: 13px;
+            left:-85px;
+        }
+        .dropdown-menu>p {
+            margin:-8px 10px 0 30px;
+        }
+        .dropdown-menu.show{
+            height:300px;
+            overflow:auto;
+        }
     </style>
 
 </head>
@@ -98,20 +119,22 @@ require_once './session.php';
         </div>
         <!-- 欄位選項 -->
         <div class="row" style="margin-top:10px">
-            <div>
-                <select id="select_col" class="form-control" style="width: 20px;">
-                    <option>Maximum_TimeInterval</option>
-                    <option>Minimum_TimeInterval</option>
-                    <option>Average_TimeInterval</option>
-                    <option>Maximum_A2Bbytes</option>
-                    <option>Maximum_B2Abytes</option>
-                    <option>Minimum_A2Bbytes</option>
-                    <option>Minimum_B2Abytes</option>
-                    <option>Maximum_bytes</option>
-                    <option>Minimum_bytes</option>
-                    <option>Average_bytes</option>
-                </select>
+        <div class="dropdown-check-list">
+            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item"><p>Maximum_TimeInterval</p>
+                <input type="checkbox" value="Minimum_TimeInterval" class="dropdown-item"><p>Minimum_TimeInterval</p>
+                <input type="checkbox" value="Average_TimeInterval" class="dropdown-item"><p>Average_TimeInterval</p>
+                <input type="checkbox" value="Maximum_A2Bbytes" class="dropdown-item"><p>Maximum_A2Bbytes</p>
+                <input type="checkbox" value="Maximum_B2Abytes" class="dropdown-item"><p>Maximum_B2Abytes</p>
+                <input type="checkbox" value="Minimum_A2Bbytes" class="dropdown-item"><p>Minimum_A2Bbytes</p>
+                <input type="checkbox" value="Minimum_B2Abytes" class="dropdown-item"><p>Minimum_B2Abytes</p>
+                <input type="checkbox" value="Maximum_bytes" class="dropdown-item"><p>Maximum_bytes</p>
+                <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
+                <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
             </div>
+        </div>
             <div style="display: grid; grid-template-columns:auto auto auto auto;">
                 <?php require_once './pagination.php' ?>
                 <div style="margin: 10px 10px 0px 10px">
@@ -149,9 +172,17 @@ require_once './session.php';
                             <th scope="col">Dest. Port</th>
                             <th scope="col">Packet</th>
                             <th scope="col">Error</th>
-                            <!-- <th scope="col" class="Maximum_TimeInterval">Maximum_TimeInterval
-                                <img class="visibility" src="./icon/visibility.png" alt="" style="height: 20px;width:20px;">
-                            </th> -->
+                            <th scope="col" class = "Maximum_TimeInterval" >Maximum_TimeInterval</th>
+                            <th scope="col" class = "Minimum_TimeInterval">Minimum_TimeInterval</th>
+                            <th scope="col" class = "Average_TimeInterval">Average_TimeInterval</th>
+                            <th scope="col" class = "Maximum_A2Bbytes">Maximum_A2Bbytes</th>
+                            <th scope="col" class = "Maximum_B2Abytes">Maximum_B2Abytes</th>
+                            <th scope="col" class = "Minimum_A2Bbytes">Minimum_A2Bbytes</th>
+                            <th scope="col" class = "Minimum_B2Abytes">Minimum_B2Abytes</th>
+                            <th scope="col" class = "Maximum_bytes">Maximum_bytes</th>
+                            <th scope="col" class = "Minimum_bytes">Minimum_bytes</th>
+                            <th scope="col" class = "Average_bytes">Average_bytes</th>
+                            <!-- <th scope="col" class = ""></th> -->
                         </tr>
                     </thead>
                     <tbody id="tbody_connection">
@@ -230,9 +261,14 @@ require_once './session.php';
     </div>
 </div>
 
+<!-- =========================================================================================================================================================== -->
+<!-- =========================================================================================================================================================== -->
+
 <script>
-    var start = moment().startOf('day').unix();
-    var end = moment().unix();
+    // var start = moment().startOf('day').unix();
+    // var end = moment().unix();
+    var start = 1625241600;
+    var end = 1625275680;
     var data = [];
     var filter = {};
     var filter_connection = {};
@@ -278,6 +314,7 @@ require_once './session.php';
     /** ------------------------------------------------------*/
     function data_query(target, filter) {
         $("#loading").show();
+        //select_col();
         if (target == "connection") {
             filter = filter_connection;
         } else if (target == "packet") {
@@ -297,6 +334,7 @@ require_once './session.php';
             success: function(msg) {
                 console.log(msg);
                 $(`#tbody_${type}`).html(msg.data);
+                select_col();
                 $('[data-toggle="popover"]').popover()
                 limit.count = msg.count;
                 final_page(Math.ceil(limit.count/limit.end))
@@ -328,7 +366,17 @@ require_once './session.php';
         }
         return format;
     }
-
+    /** ------------------------------------------------------*
+     * checkbox
+     ** ------------------------------------------------------*/
+     function select_col(){
+         $("input[type='checkbox']").each(function(){
+             colname = $(this).val();
+             if(!$(this).prop("checked")){
+                $(`.${colname}`).addClass("hide");
+             }
+         })
+     }
     /** ------------------------------------------------------*
      * echart function
     /** ------------------------------------------------------*/
@@ -405,8 +453,6 @@ require_once './session.php';
         });
     }
 
-
-
     $(function() {
         pagination.init();
         /** ------------------------------------------------------*
@@ -427,6 +473,7 @@ require_once './session.php';
                 $("#midPage").find(".page-link").attr("value",page_status.connection);
                 limit.skip = (page_status.connection * limit.end);
                 pagination.run($("#midPage"),limit.count,limit.end);
+                $("#dropdownMenuButton").css("display","block");
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
                 $("#session_packet").css("display", "block");
@@ -436,6 +483,7 @@ require_once './session.php';
                 page_status.connection = $(".page-item.active>.page-link").attr("value");
                 limit.skip = 0;
                 pagination.init();
+                $("#dropdownMenuButton").css("display","none");
             }
             type = $(".pick_page.active").attr("value");
 
@@ -445,8 +493,10 @@ require_once './session.php';
          * 時間顯示
         /** ------------------------------------------------------*/
         $('#reportrange').daterangepicker({
-            startDate: moment().startOf('day'),
-            endDate: moment(),
+            // startDate: moment().startOf('day'),
+            // endDate: moment(),
+            startDate: 1625241600,
+            endDate: 1625275680,
             showDropdowns: true,
             timePicker: true,
             locale: {
@@ -537,6 +587,18 @@ require_once './session.php';
                 }
             });
         })
+         /** ------------------------------------------------------*
+         * colume select
+         ** ------------------------------------------------------*/
+        $("input[type='checkbox']").on("click",function(){
+            var colname = $(this).val();
+            if($(this).prop("checked")){
+                $(`.${colname}`).removeClass("hide");
+            }else{
+                $(`.${colname}`).addClass("hide");
+            }
+        })
+
 
     });
 

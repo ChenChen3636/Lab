@@ -64,6 +64,20 @@ function protocol($str)
     return $type;
 }
 
+function port($num){
+    $str = "";
+    for($i=0;$i<12;$i++){
+        $even = $i%2;
+        if($even == 1 && $i < 10){
+            $str .= $num[$i].":";
+        }
+        else{
+            $str .= $num[$i];
+        }
+    }
+    return $str;
+}
+
 function showError($e, $e2)
 {
     $btn_color = "";
