@@ -112,37 +112,45 @@ require_once './session.php';
                 </div>
             </div>
         </div>
-
         <!-- 圖表背景 -->
-        <div class="row" style="padding-top:70px ;">
+        <div class="row" style="padding-top:70px;">
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
-        <!-- 欄位選項 -->
         <div class="row" style="margin-top:10px">
-        <div class="dropdown-check-list">
-            <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item"><p>Maximum_TimeInterval</p>
-                <input type="checkbox" value="Minimum_TimeInterval" class="dropdown-item"><p>Minimum_TimeInterval</p>
-                <input type="checkbox" value="Average_TimeInterval" class="dropdown-item"><p>Average_TimeInterval</p>
-                <input type="checkbox" value="Maximum_A2Bbytes" class="dropdown-item"><p>Maximum_A2Bbytes</p>
-                <input type="checkbox" value="Maximum_B2Abytes" class="dropdown-item"><p>Maximum_B2Abytes</p>
-                <input type="checkbox" value="Minimum_A2Bbytes" class="dropdown-item"><p>Minimum_A2Bbytes</p>
-                <input type="checkbox" value="Minimum_B2Abytes" class="dropdown-item"><p>Minimum_B2Abytes</p>
-                <input type="checkbox" value="Maximum_bytes" class="dropdown-item"><p>Maximum_bytes</p>
-                <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
-                <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
+            <div class="col">
+                <div id="resetPacket" style="display:none">
+                        <button id="reset" class="btn btn-secondary">back to packet list</button>
+                </div>
             </div>
-        </div>
-            <div style="display: grid; grid-template-columns:auto auto auto auto;">
+            <div class="col align-self-center"  style="display:flex;justify-content:center;align-items:center;">
                 <?php require_once './pagination.php' ?>
+            </div>
+            <div class="col" style="float:right;display:flex;justify-content:flex-end">
                 <div style="margin: 10px 10px 0px 10px">
+                    <label>result: </label>
                     <a id="total_page"></a>
                     <label>pages</label>
                 </div>
-                <div id="resetPacket" style="display:none">
-                    <button id="reset" class="btn btn-secondary">back to packet list</button>
+                <!-- 欄位選項 -->
+                <div class="dropdown-check-list" >
+
+                    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:40px" >
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item"><p>Maximum_TimeInterval</p>
+                        <input type="checkbox" value="Minimum_TimeInterval" class="dropdown-item"><p>Minimum_TimeInterval</p>
+                        <input type="checkbox" value="Average_TimeInterval" class="dropdown-item"><p>Average_TimeInterval</p>
+                        <input type="checkbox" value="Maximum_A2Bbytes" class="dropdown-item"><p>Maximum_A2Bbytes</p>
+                        <input type="checkbox" value="Maximum_B2Abytes" class="dropdown-item"><p>Maximum_B2Abytes</p>
+                        <input type="checkbox" value="Minimum_A2Bbytes" class="dropdown-item"><p>Minimum_A2Bbytes</p>
+                        <input type="checkbox" value="Minimum_B2Abytes" class="dropdown-item"><p>Minimum_B2Abytes</p>
+                        <input type="checkbox" value="Maximum_bytes" class="dropdown-item"><p>Maximum_bytes</p>
+                        <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
+                        <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
+                    </div>
+                    <button type="button" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" >
+                        <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
+                    </button>
                 </div>
             </div>
         </div>
@@ -151,9 +159,8 @@ require_once './session.php';
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
-
         <!--  -->
-        <!-- 主頁div -->
+        <!--主頁div -->
         <!--  -->
 
         <div id="main_div">
@@ -473,7 +480,7 @@ require_once './session.php';
                 $("#midPage").find(".page-link").attr("value",page_status.connection);
                 limit.skip = (page_status.connection * limit.end);
                 pagination.run($("#midPage"),limit.count,limit.end);
-                $("#dropdownMenuButton").css("display","block");
+                $("#dropdownMenuButton").css("display","inline-block");
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
                 $("#session_packet").css("display", "block");
