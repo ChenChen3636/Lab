@@ -56,6 +56,7 @@ require_once './session.php';
             position: relative;
             top: 13px;
             left:-85px;
+            cursor: pointer;
         }
         .dropdown-menu>p {
             margin:-8px 10px 0 30px;
@@ -63,6 +64,9 @@ require_once './session.php';
         .dropdown-menu.show{
             height:300px;
             overflow:auto;
+        }
+        .invalid{
+            cursor: not-allowed;
         }
     </style>
 
@@ -117,11 +121,7 @@ require_once './session.php';
             <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
         </div>
         <div class="row" style="margin-top:10px">
-            <div class="col">
-                <div id="resetPacket" style="display:none">
-                        <button id="reset" class="btn btn-secondary">back to packet list</button>
-                </div>
-            </div>
+            <div class="col"></div>
             <div class="col align-self-center"  style="display:flex;justify-content:center;align-items:center;">
                 <?php require_once './pagination.php' ?>
             </div>
@@ -131,9 +131,13 @@ require_once './session.php';
                     <a id="total_page"></a>
                     <label>pages</label>
                 </div>
+                <div id="resetPacket" style="display:none">
+                            <button id="reset" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Reset packets" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px">
+                                <img src="./icon/recycle.png" alt="" style="height:25px;width25px;">
+                            </button>
+                </div>
                 <!-- 欄位選項 -->
                 <div class="dropdown-check-list" >
-
                     <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:40px" >
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -148,7 +152,7 @@ require_once './session.php';
                         <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
                         <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
                     </div>
-                    <button type="button" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" >
+                    <button type="button" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
                         <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
@@ -486,7 +490,7 @@ require_once './session.php';
                 $("#session_packet").css("display", "block");
                 $("#conne").removeClass("active")
                 $("#pack").addClass("active");
-                $("#resetPacket").css("display","block");
+                $("#resetPacket").css("display","inline-block");
                 page_status.connection = $(".page-item.active>.page-link").attr("value");
                 limit.skip = 0;
                 pagination.init();
@@ -605,7 +609,12 @@ require_once './session.php';
                 $(`.${colname}`).addClass("hide");
             }
         })
-
+        /** ------------------------------------------------------*
+         * tooltips
+         ** ------------------------------------------------------*/
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
 
     });
 

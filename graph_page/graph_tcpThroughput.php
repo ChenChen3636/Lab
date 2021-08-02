@@ -141,6 +141,17 @@ header("Pragma: no-cache");
 <script src="//d3js.org/d3.v3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
 
+<style>
+
+text {
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+</style>
+
+
+
 <script>
 
 var margin = {top: 30, right: 100, bottom: 30, left: 100},
@@ -153,6 +164,8 @@ var x = d3.time.scale().range([0, width]);
 var y0 = d3.scale.linear().range([height, 0]);
 var y1 = d3.scale.linear().range([height, 0]);
 
+
+
 var xAxis = d3.svg.axis().scale(x)
     .orient("bottom").ticks(20);
 
@@ -164,34 +177,50 @@ var yAxisRight = d3.svg.axis().scale(y1)
 
 var valueline = d3.svg.line()
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y0(d.throughput); });
+    .y(function(d) { return y0(d.throughput/1000.0); });
     
 var valueline2 = d3.svg.line()
     .x(function(d) { return x(d.date); })
-    .y(function(d) { return y1(d.segment); });
+    .y(function(d) { return y1(d.pkt_num); });
   
 var svg = d3.select("body")
-    .append("svg")
+        .append("svg")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-        .attr("transform", 
-              "translate(" + margin.left + "," + margin.top + ")");
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x",0 - (height / 2))
+      .attr("dy", "3em")
+      .style("text-anchor", "middle")
+      .text("Throughput (KB)");  
+
+    svg.append("text")
+      .attr("transform", "rotate(90)")
+      .attr("y", 0 - (width + margin.right))
+      .attr("x", (height/2))
+      .attr("dy", "3em")
+      .style("text-anchor", "middle")
+      .text("Packets");  
+
 
 // Get the data
 d3.csv("./graph_driver/data/d3js_TCPthroughput.csv", function(error, data) {
     data.forEach(function(d) {
         d.date = parseDate(d.date);
         d.throughput = +d.throughput;
-        d.segment = +d.segment;
+        d.pkt_num = +d.pkt_num;
     });
 
     // Scale the range of the data
     x.domain(d3.extent(data, function(d) { return d.date; }));
     y0.domain([0, d3.max(data, function(d) {
-		return Math.max(d.throughput); })]); 
+		return Math.max(d.throughput/1000.0); })]); 
     y1.domain([0, d3.max(data, function(d) { 
-		return Math.max(d.segment); })]);
+		return Math.max(d.pkt_num); })]);
 
     svg.append("path")        // Add the valueline path.
         .attr("d", valueline(data));

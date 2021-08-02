@@ -76,6 +76,7 @@ def main():
   
   record_date_list = list()
   record_flow_list = list()
+  record_pktNum_list = list()
   
 
 
@@ -89,14 +90,16 @@ def main():
       try:
         date_index = record_date_list.index(data_time)
         record_flow_list[date_index] += (single_con["A2Bbytes"]+single_con["B2Abytes"])
+        record_pktNum_list[date_index] += (single_con["A2Bpacket"]+single_con["B2Apacket"])
       except ValueError:
         record_date_list.append(data_time)
         record_flow_list.append(single_con["A2Bbytes"]+single_con["B2Abytes"])
+        record_pktNum_list.append(single_con["A2Bpacket"]+single_con["B2Apacket"])
 
     
     
   for i in range(len(record_date_list)):
-    print("time: {}, data: {}".format(record_date_list[i], record_flow_list[i]))
+    print("time: {}, data: {}, pkt_num: {}".format(record_date_list[i], record_flow_list[i], record_pktNum_list[i]))
 
 
 
@@ -104,14 +107,14 @@ def main():
   #write data
   fdata_d3js = open("./data/d3js_TCPthroughput.csv", "w")
 
-  fdata_d3js.write("date,throughput,segment\n")
+  fdata_d3js.write("date,throughput,pkt_num\n")
 
   for i in range(len(record_date_list)):
     fdata_d3js.write(str(record_date_list[i]))
     fdata_d3js.write(",")
     fdata_d3js.write(str(record_flow_list[i]))
     fdata_d3js.write(",")
-    fdata_d3js.write("0")
+    fdata_d3js.write(str(record_pktNum_list[i]))
     fdata_d3js.write("\n")
 
 

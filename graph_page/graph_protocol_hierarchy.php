@@ -143,9 +143,20 @@ header("Pragma: no-cache");
 
 
 <script src="//d3js.org/d3.v3.min.js"></script>
+
+
+<style>
+
+text {
+  font-family: sans-serif;
+  font-size: 15px;
+}
+
+</style>
+
 <script>
 
-var margin = {top: 30, right: 200, bottom: 0, left: 200},
+var margin = {top: 50, right: 200, bottom: 0, left: 200},
     width = 1280 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
@@ -170,8 +181,16 @@ var xAxis = d3.svg.axis()
 var svg = d3.select("body").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-  .append("g")
+    .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+    svg.append("text")      // text label for the x axis
+        .attr("x", (width)/2 )
+        .attr("y",  -35)
+        .style("text-anchor", "middle")
+        .text("Bytes"); 
+
 
 svg.append("rect")
     .attr("class", "background")
