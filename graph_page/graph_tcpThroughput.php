@@ -55,7 +55,7 @@ header("Pragma: no-cache");
         </div>
 
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="">
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="data range: <?php echo $_GET["lastDate"]?>">
             <img src="./img/graphic_information.png" alt="information"></img>
           </button>
         </div>
@@ -131,8 +131,10 @@ header("Pragma: no-cache");
 	});
 
 
+  //$('[data-toggle="popover"]').popover();
+
   $(document).ready(function(){
-    $('[data-toggle="popover"]').popover();   
+    $('[data-toggle="popover"]').popover('show');
   });
 
 </script>

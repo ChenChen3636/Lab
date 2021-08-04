@@ -3,6 +3,7 @@
 // error_reporting(E_ALL);
 session_start();
 require_once './session.php';
+require_once './download.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -152,7 +153,9 @@ require_once './session.php';
                         <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
                         <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
                     </div>
-                    <button type="button" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
+                    <!-- download -->
+                    <button type="button" id="btn-download" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
+                        <a href="" download=""></a>    
                         <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
@@ -466,6 +469,7 @@ require_once './session.php';
 
     $(function() {
         pagination.init();
+        $('[data-toggle="tooltip"]').tooltip()
         /** ------------------------------------------------------*
          * 網頁一讀取，先query預設資料
         /** ------------------------------------------------------*/
@@ -610,12 +614,25 @@ require_once './session.php';
             }
         })
         /** ------------------------------------------------------*
-         * tooltips
+         * download click
          ** ------------------------------------------------------*/
-        $(function () {
-            $('[data-toggle="tooltip"]').tooltip()
-        })
-
+        $("#btn-download").on("click",function(){
+            $(this).children("a").attr({href:"./bs_test.php",download:"downtest.php"});
+            
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: 'download.php',
+        //         dataType: 'json',
+        //         data: {
+        //             start : start,
+        //             end : end
+        //         },
+        //         success: function(msg) {
+        //             downfile();
+        //         }
+        //     })
+         });
+    
     });
 
 </script>
