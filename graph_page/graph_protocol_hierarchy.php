@@ -2,6 +2,27 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+
+
+$json_string = file_get_contents("./graph_driver/data/d3js_protocol_hierarchy.json");
+$timeRange_ary = json_decode($json_string, true);
+
+
+$timeRange_data = "";
+
+foreach ($timeRange_ary as $key => $value)
+{
+    switch ( $key ) {
+        case 'dataTime' :
+          $timeRange_data = $value;
+            break;
+    }
+}
+
+//echo $timeRange_data;
+
+//echo "<script>console.log('" . $timeRange_data. "' );</script>";
+
 ?>
 
 <!DOCTYPE html>
@@ -59,8 +80,8 @@ header("Pragma: no-cache");
         </div>
 
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="">
-            <img src="./img/graphic_information.png" alt="information"></img>
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="data range: <?php echo $timeRange_data?>">
+            <label></label>
           </button>
         </div>
 

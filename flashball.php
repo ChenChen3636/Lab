@@ -3,7 +3,7 @@
 // error_reporting(E_ALL);
 session_start();
 require_once './session.php';
-require_once './download.php';
+//require_once './download.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,7 +155,6 @@ require_once './download.php';
                     </div>
                     <!-- download -->
                     <button type="button" id="btn-download" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
-                        <a href="" download=""></a>    
                         <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
@@ -617,22 +616,19 @@ require_once './download.php';
          * download click
          ** ------------------------------------------------------*/
         $("#btn-download").on("click",function(){
-            $(this).children("a").attr({href:"./bs_test.php",download:"downtest.php"});
-            
-        //     $.ajax({
-        //         type: 'POST',
-        //         url: 'download.php',
-        //         dataType: 'json',
-        //         data: {
-        //             start : start,
-        //             end : end
-        //         },
-        //         success: function(msg) {
-        //             downfile();
-        //         }
-        //     })
-         });
-    
+            $.ajax({
+                type: 'POST',
+                url: 'download.php',
+                dataType: 'json',
+                data: {
+                    start : 1625241600,
+                    end : 1625241700
+                },
+                success: function(msg) {
+                }
+            });
+          });
+
     });
 
 </script>

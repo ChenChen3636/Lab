@@ -56,14 +56,20 @@ def main():
 
   #check_data_range = input("To select a range? (y/n): ")
   check_data_range = argv_list[1]
+
+  timeRange_str = "null"
   
   if check_data_range == "y":  
 
     s_timeStamp = int(argv_list[2])
     e_timeStamp = int(argv_list[3])
-    
+
+    timeRange_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(s_timeStamp))
+    timeRange_str += " ~ "
+    timeRange_str += time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_timeStamp))
     
     print("data range: [{}] to [{}]".format(s_timeStamp, e_timeStamp))
+    #print(timeRange_str)
     
   else:
     print("select all data...")
@@ -99,8 +105,8 @@ def main():
 
   tcp_smtp_flow = 0     #port 25
   tcp_smtpSSL_flow = 0  #port 465
-  tcp_pop3_flow = 0          #port 110
-  tcp_pop3SSL_flow = 0       #port 995
+  tcp_pop3_flow = 0     #port 110
+  tcp_pop3SSL_flow = 0  #port 995
 
   udp_dns_flow = 0      #port 53
   udp_dhcp_flow = 0     #port 67 68
@@ -270,6 +276,7 @@ def main():
 
 
   json_str = {
+      "dataTime": timeRange_str,
       "name": "Frame",
       "children": [
           {

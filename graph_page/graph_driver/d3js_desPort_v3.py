@@ -56,11 +56,15 @@ def main():
   #check_data_range = input("To select a range? (y/n): ")
   check_data_range = argv_list[1]
   
+  timeRange_str = "null"
   
   if check_data_range == "y":
     s_timeStamp = int(argv_list[2])
     e_timeStamp = int(argv_list[3])
     
+    timeRange_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(s_timeStamp))
+    timeRange_str += " ~ "
+    timeRange_str += time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_timeStamp))
     
     #print("[{}] to [{}]".format(s_timeStamp, e_timeStamp))
     print("data range: [{}] to [{}]".format(s_timeStamp, e_timeStamp))
@@ -254,7 +258,14 @@ def main():
 
   fdata_d3js = open("./data/d3js_desPort.json", "w")
   
-  fdata_d3js.write("{\n\t\"nodes\": [\n\t\t")
+  fdata_d3js.write("{\n")
+
+  fdata_d3js.write("\t\"dataTime\": \"")
+  fdata_d3js.write(str(timeRange_str))
+  fdata_d3js.write("\",\n")
+
+  fdata_d3js.write("\t\"nodes\": [\n\t\t")
+
 
   check_loop_first = 1
   
@@ -382,7 +393,16 @@ def main():
   json_data = json.loads(json_data)
 
   new_json = open("./data/d3js_desPort_updata.json", "w")   #updata json
-  new_json.write("{\n\t\"nodes\": [\n\t\t")
+
+
+  new_json.write("{\n")
+
+  new_json.write("\t\"dataTime\": \"")
+  new_json.write(str(timeRange_str))
+  new_json.write("\",\n")
+
+  new_json.write("\t\"nodes\": [\n\t\t")
+
 
   check_loop_first = 1
 

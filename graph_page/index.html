@@ -23,6 +23,40 @@
         crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/flash.css">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <style type="text/css">
+
+    .navbar {
+        position: relative;
+        min-height: 50px;
+        margin-bottom: 0px;
+        border: 5px solid transparent;
+    }
+
+    .nav>li>a {
+        position: relative;
+        display: block;
+        padding: 3px 10px;
+    }
+
+    .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+        color: #fff;
+        background-color: #ffffff;
+    }
+
+    .nav>li>a:hover {
+        text-decoration: none;
+        background-color: rgb(93, 142, 197);
+    }
+
+    .nav>li>a:focus {
+        text-decoration: none;
+        background-color: rgb(159, 187, 219);
+    }
+
+    </style>
+
 </head>
 
 <body>
@@ -45,38 +79,96 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="background-color:cornsilk;box-shadow: 0px 11px 8px -8px #CCC,
-        0px -11px 8px -10px #CCC;">
+        <div class="row" style="background-color:cornsilk;box-shadow: 0px 11px 8px -8px #CCC, 0px -11px 8px -10px #CCC;">
             <div class="col-md-12" style="color: black;" id="graphNav">
-                <a class="g_link" href="graph_ip.php" target="graph_iframe" style="color: black;">ip</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_mac.php" target="graph_iframe" style="color: black;">mac</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_conPktDelay.php" target="graph_iframe"
-                    style="color: black;">conPkt_Delay</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_desPort.php" target="graph_iframe" style="color: black;">desPort</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_DNS.php" target="graph_iframe" style="color: black;">DNS</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_bubble_conNumDes.php" target="graph_iframe"
-                    style="color: black;">bubble</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_calendar_conNum.php" target="graph_iframe"
-                    style="color: black;">calendar</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_protocol_hierarchy.php" target="graph_iframe"
-                    style="color: black;">protocol_hierarchy</a>
-                <label for="">|</label>
-                <a class="g_link" href="graph_tcpThroughput.php" target="graph_iframe"
-                    style="color: black;">tcp_throughput</a>
+
+
+                <h5>
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#topology">Topology</a></li>
+                    <li><a data-toggle="tab" href="#statistics">Statistics</a></li>
+                </ul>
+                </h5>
+
+                <div class="tab-content">
+
+                    <div id="topology" class="tab-pane fade in active">
+
+
+                        <h5>
+                        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                                <a class="btn btn-warning  btn-sm"  href="graph_ip.php" target="graph_iframe" role="tab">ip</a>  
+                            </li>
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                              <a class="btn btn-warning  btn-sm" href="graph_mac.php" target="graph_iframe" role="tab">mac</a>
+                            </li>
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                              <a class="btn btn-warning  btn-sm" href="graph_conPktDelay.php" target="graph_iframe" role="tab">conPkt_Delay</a>
+                            </li>
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                                <a class="btn btn-warning  btn-sm" href="graph_desPort.php" target="graph_iframe" role="tab">desPort</a>
+                            </li>
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                                <a class="btn btn-warning  btn-sm" href="graph_DNS.php" target="graph_iframe" role="tab">DNS</a>
+                            </li>
+                        </ul>
+                        </h5>
+
+
+                    </div>
+
+                    <div id="statistics" class="tab-pane fade">
+
+
+                        <h5>
+                            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                                <label>&nbsp&nbsp&nbsp&nbsp</label>
+                                <li class="nav-item">
+                                    <a class="btn btn-warning  btn-sm"  href="graph_bubble_conNumDes.php" target="graph_iframe" role="tab">bubble</a>  
+                                </li>
+                                <label>&nbsp&nbsp&nbsp&nbsp</label>
+                                <li class="nav-item">
+                                  <a class="btn btn-warning  btn-sm" href="graph_calendar_conNum.php" target="graph_iframe" role="tab">calendar</a>
+                                </li>
+                                <label>&nbsp&nbsp&nbsp&nbsp</label>
+                                <li class="nav-item">
+                                  <a class="btn btn-warning  btn-sm" href="graph_protocol_hierarchy.php" target="graph_iframe" role="tab">protocol_hierarchy</a>
+                                </li>
+                                <label>&nbsp&nbsp&nbsp&nbsp</label>
+                                <li class="nav-item">
+                                    <a class="btn btn-warning  btn-sm" href="graph_tcpThroughput.php" target="graph_iframe" role="tab">tcp_throughput</a>
+                                </li>
+                            </ul>
+                        </h5>
+
+                    </div>
+
+                </div>
+
+
+
             </div>
         </div>
     </div>
 
+    <iframe id="graph_iframe" name="graph_iframe" src="./graph_ip.php" frameborder="0" width="100%" height="1280" style="margin-top: 10px;"></iframe>
 
-    <iframe id="graph_iframe" name="graph_iframe" src="./graph_ip.php" frameborder="0" width="100%" height="1280"
-        style="margin-top: 10px;"></iframe>
 </body>
 
 </html>
+
+
+<script src="https://code.jquery.com/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script>
+
+
+</script>

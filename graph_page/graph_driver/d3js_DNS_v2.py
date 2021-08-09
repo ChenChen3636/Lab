@@ -55,11 +55,17 @@ def main():
   #check_data_range = input("To select a range? (y/n): ")
   check_data_range = argv_list[1]
   
+  timeRange_str = "null"
   
   if check_data_range == "y":
   
     s_timeStamp = int(argv_list[2])
     e_timeStamp = int(argv_list[3])
+
+
+    timeRange_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(s_timeStamp))
+    timeRange_str += " ~ "
+    timeRange_str += time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_timeStamp))
     
     
     #print("[{}] to [{}]".format(s_timeStamp, e_timeStamp))
@@ -235,7 +241,13 @@ def main():
 
   fdata_d3js = open("./data/d3js_DNS.json", "w")
   
-  fdata_d3js.write("{\n\t\"nodes\": [\n\t\t")
+  fdata_d3js.write("{\n")
+
+  fdata_d3js.write("\t\"dataTime\": \"")
+  fdata_d3js.write(str(timeRange_str))
+  fdata_d3js.write("\",\n")
+
+  fdata_d3js.write("\t\"nodes\": [\n\t\t")
 
   check_loop_first = 1
   for single_node in record_srcIP_list:          #node  srcIP

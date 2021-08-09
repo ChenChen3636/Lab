@@ -2,6 +2,23 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+
+
+$json_string = file_get_contents("./graph_driver/data/d3js_ipAB.json");
+$timeRange_ary = json_decode($json_string, true);
+
+
+$timeRange_data = "";
+
+foreach ($timeRange_ary as $key => $value)
+{
+    switch ( $key ) {
+        case 'dataTime' :
+          $timeRange_data = $value;
+            break;
+    }
+}
+
 ?>
 
 
@@ -38,8 +55,8 @@ header("Pragma: no-cache");
         </div>
 
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="IP topology" data-html="true" data-content="Node: ip address<br>Link: number of connection">
-            <img src="./img/graphic_information.png" alt="information"></img>
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="IP topology" data-html="true" data-content="Node: ip address<br>Link: number of connection<br><br>data range: <?php echo $timeRange_data?>">
+          <label></label>
           </button>
         </div>
 

@@ -35,7 +35,7 @@ header("Pragma: no-cache");
 
         <div class="col" style="text-align:right;">
           <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Number of destination connection" data-html="true" data-content="Bubble: number of conncetion">
-            <img src="./img/graphic_information.png" alt="information"></img>
+            <label></label>
           </button>
         </div>
 
