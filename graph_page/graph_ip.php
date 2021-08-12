@@ -36,6 +36,19 @@ foreach ($timeRange_ary as $key => $value)
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 
+    <style type="text/css">
+
+      .card-header {
+        padding: .3rem 1.0rem;
+      }
+
+      .card-body {
+          padding: 0.5rem;
+      }
+
+    </style>
+
+
 </head>
 <body>
   
@@ -44,17 +57,20 @@ foreach ($timeRange_ary as $key => $value)
     <div class="container-fluid">
       <div class="row">
         <div class="col">
-          <table>
-            <tr>
-                <td><p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false" >SET condition</a></p></td>
-                <td>&nbsp;</td>
-                <td><p><a class="btn btn-secondary btn-sm" href="./graph_ip2.php" role="button" >switch to des</a></p></td>   
-            </tr>
-          </table>
+          <p><a class="btn btn-primary" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false" >Search</a></p>
+        </div>
+
+        <div class="col" style="text-align:center; display:flex;justify-content: center">
+          <div class="card text-white bg-secondary mb-3" style="max-width: 22rem;">
+
+            <div class="card-body">
+              <p class="card-text"><?php echo $timeRange_data?></p>
+            </div>
+          </div>
         </div>
 
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="IP topology" data-html="true" data-content="Node: ip address<br>Link: number of connection<br><br>data range: <?php echo $timeRange_data?>">
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="IP topology" data-html="true" data-content="Node: ip address<br>Link: number of connection">
             <!--<img src="./img/graphic_information.png" alt="information"></img>-->
             <label></label>
           </button>

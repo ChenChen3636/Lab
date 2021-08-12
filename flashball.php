@@ -3,7 +3,6 @@
 // error_reporting(E_ALL);
 session_start();
 require_once './session.php';
-//require_once './download.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +41,7 @@ require_once './session.php';
         #main_div {
             width: 100%;
             overflow: auto;
-            height: calc(100vh - 350px);
+            height: calc(100vh - 420px);
         }
         .hide {
             display: none;
@@ -74,7 +73,7 @@ require_once './session.php';
 </head>
 <body>
     <div class="container-fluid">
-        <div style="position: fixed; z-index:2; width:99%;">
+        <div style="position: relative; z-index:2; width: 100%;">
             <div class="row">
                 <div class="col-md-12">
                     <div class="row navbar">
@@ -83,7 +82,6 @@ require_once './session.php';
                                 <a href="flashball.php"> <img src="./icon/ball.png" alt="home" class="logo"></a>
                                 <a class="nav-link active" href="#">Session</a>
                                 <a class="nav-link" href="./graph_page/index.html">Graph</a>
-                                <!-- <a class="nav-link" href="help.php">Help</a> -->
                             </nav>
                         </div>
                         <div class="col-md-4">
@@ -93,33 +91,38 @@ require_once './session.php';
                     </div>
                 </div>
             </div>
-            <div class="row" style="background-color:cornsilk; box-shadow: 0px 11px 8px -8px #CCC, 0px -11px 8px -10px #CCC;">
+            <div class="row" style="background-color:cornsilk; box-shadow: 0px 10px 5px -8px #CCC">
                 <div class="col-md-4">
-                    <!-- 動態列表啟動暫停 -->
-                    <!-- <img src="./icon/play.png" alt="start" class="toolbar">
-                    <img src="./icon/stop.png" alt="stop" class="toolbar"> -->
                     <!-- 選擇connection or packet -->
-                    <p id="conne" href="" target="" class="select pick_page active" value="connection">connection</p>
+                    <button id="conne" href="" target="" class="select pick_page btn active" value="connection">connection</button>
                     <label for="">|</label>
-                    <p id="pack" href="" target="" class="select pick_page" value="packet">packet</p>
+                    <button id="pack" href="" target="" class="select pick_page btn " value="packet">packet</button>
                 </div>
                 <div class="col-md-4 align-self-center" style="display:flex;justify-content:center;align-items:center;">
                     <!--選擇時間範圍-->
                     <input id="reportrange" type="text" style="background: #fff; cursor: pointer; text-align:center;width: 300px; border:0px">
                 </div>
-                <div class="col-md-4">
-                    <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-light logo search" data-toggle="modal" data-target="#exampleModalCenter" style="padding:0px;  background-color:transparent;border-color:transparent">
-                        <div style="background-color: transparent;">
-                            <img src="./icon/loupe.png" alt="search" class="toolbar">
-                        </div>
-                    </button>
-                </div>
             </div>
         </div>
+
         <!-- 圖表背景 -->
-        <div class="row" style="padding-top:70px;">
-            <div id="main" style="width:100%;height:200px;float:0 auto;background-color:aliceblue ;box-shadow: 0px 11px 8px -8px #CCC,0px -11px 8px -10px #CCC;"></div>
+        <div class="row">
+            <div class="col">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
+                        <a class="nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a>
+                        <a class="nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                        <div id="chart-cflow" style="height:200px;width: 100%;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
+                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+                </div>
+            </div>
         </div>
         <div class="row" style="margin-top:10px">
             <div class="col"></div>
@@ -133,13 +136,13 @@ require_once './session.php';
                     <label>pages</label>
                 </div>
                 <div id="resetPacket" style="display:none">
-                            <button id="reset" class="btn btn-light" data-toggle="tooltip" data-placement="top" title="Reset packets" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px">
+                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="Reset packets" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#80a9d5">
                                 <img src="./icon/recycle.png" alt="" style="height:25px;width25px;">
                             </button>
                 </div>
                 <!-- 欄位選項 -->
                 <div class="dropdown-check-list" >
-                    <button class="btn btn-success dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:40px" >
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:40px;background-color:#68ae78">
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item"><p>Maximum_TimeInterval</p>
@@ -153,8 +156,12 @@ require_once './session.php';
                         <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
                         <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
                     </div>
+                    <!-- filter -->
+                    <button type="button" class="btn"  data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f0b685">
+                        <img src="./icon/loupe.png" alt="" style ="height:25px;width:25px">
+                    </button>
                     <!-- download -->
-                    <button type="button" id="btn-download" class="btn btn-warning" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
+                    <button type="button" id="btn-download" class="btn" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f8d362" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
                         <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
@@ -162,7 +169,7 @@ require_once './session.php';
         </div>
         <div class="d-flex justify-content-center">
             <div class="spinner-border text-primary" role="status" id="loading">
-                <span class="sr-only">Loading...</span>
+                <span class="sr-only"></span>
             </div>
         </div>
         <!--  -->
@@ -205,7 +212,7 @@ require_once './session.php';
 
             <!-- //-------------------- packet ----------------------// -->
             <div id="session_packet" style="display: none;">
-                <div id="main_packet" style="height:360px;overflow:auto">
+                <div id="main_packet" style="height:400px;overflow:auto">
                     <table class="table table-hover" id="table_packet">
                         <thead>
                             <tr>
@@ -356,7 +363,8 @@ require_once './session.php';
                 $("#loading").hide();
             }
         });
-        chart(start, end);
+       chart(start, end);
+       line_chart();
     }
 
     /** ------------------------------------------------------*
@@ -398,14 +406,15 @@ require_once './session.php';
             type: 'POST',
             url: 'echartTest.php',
             data: {
-                filter: filter_connection
+                filter: filter_connection,
+                p_filter: filter_packet
             },
             dataType: "json",
             success: function(msg) {
                 console.log(Object.keys(msg));
                 console.log(Object.values(msg));
 
-                var myChart = echarts.init(document.getElementById('main'));
+                var myChart = echarts.init(document.getElementById('chart-cflow'));
                 var date = Object.keys(msg);
                 var data = Object.values(msg);
 
@@ -465,7 +474,81 @@ require_once './session.php';
             }
         });
     }
+    function line_chart(){
+        var chartDom = document.getElementById('chart-rank');
+        var myChart = echarts.init(chartDom);
+        var option;
 
+        option = {
+            title: {
+                text: '流量排名'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['120.126.16.21', '163.25.110.1', '120.126.16.22', '192.168.16.0', '127.0.0.1']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['7/3 00:00', '7/3 2:00', '7/3 4:00', '7/3 6:00', '7/3 8:00', '7/3 10:00', '7/3 12:00']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name: '120.126.16.21',
+                    type: 'line',
+                    stack: '总量',
+                    data: [120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name: '163.25.110.1',
+                    type: 'line',
+                    stack: '总量',
+                    data: [220, 182, 191, 234, 290, 330, 310]
+                },
+                {
+                    name: '120.126.16.22',
+                    type: 'line',
+                    stack: '总量',
+                    data: [150, 232, 201, 154, 190, 330, 410]
+                },
+                {
+                    name: '192.168.16.0',
+                    type: 'line',
+                    stack: '总量',
+                    data: [320, 332, 301, 334, 390, 330, 320]
+                },
+                {
+                    name: '127.0.0.1',
+                    type: 'line',
+                    stack: '总量',
+                    data: [820, 932, 901, 934, 1290, 1330, 1320]
+                }
+            ]
+        };
+
+        myChart.setOption(option);
+    }
+
+
+    /** ------------------------------------------------------*
+     *
+     ** ------------------------------------------------------*/
     $(function() {
         pagination.init();
         $('[data-toggle="tooltip"]').tooltip()
@@ -616,18 +699,41 @@ require_once './session.php';
          * download click
          ** ------------------------------------------------------*/
         $("#btn-download").on("click",function(){
-            $.ajax({
-                type: 'POST',
-                url: 'download.php',
-                dataType: 'json',
-                data: {
-                    start : 1625241600,
-                    end : 1625241700
-                },
-                success: function(msg) {
-                }
-            });
-          });
+
+            let reader  = new FileReader();
+            function downloadFile(){
+                xhttp_request('download.php', function(response){
+                    var blob = new Blob([response], {type: "application/octet-stream"});
+                    reader.readAsArrayBuffer(blob);
+
+                    let url = URL.createObjectURL(blob);
+                    let dom_a = document.createElement('a');
+
+                    dom_a.href = url ;
+                    dom_a.download = "test.pcap" ;
+
+                    document.getElementsByTagName('body')[0].appendChild(dom_a);
+                    dom_a.click();
+                    dom_a.remove();
+                });
+            }
+
+            function xhttp_request(url, callback){
+                var data = 'start='+start+"&end="+end;
+                var xhttp  = new XMLHttpRequest();
+                xhttp.open("POST",url,true);
+                xhttp.responseType  = "arraybuffer" ;
+                xhttp.setRequestHeader('Content-type',"application/x-www-form-urlencoded; charset=UTF-8");
+                xhttp.onload  = function(){
+                    if(this.status == 200 ){
+                        callback(this.response);
+                    }
+                };
+                xhttp.send(data);
+            }
+            downloadFile();
+
+        });
 
     });
 

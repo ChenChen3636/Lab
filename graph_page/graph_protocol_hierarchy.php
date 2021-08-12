@@ -61,6 +61,17 @@ foreach ($timeRange_ary as $key => $value)
     stroke: #000;
     }
 
+
+    .card-header {
+      padding: .3rem 1.0rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+
+    
     </style>
 
 
@@ -74,10 +85,18 @@ foreach ($timeRange_ary as $key => $value)
         <div class="col">
           <table>
             <tr>
-                <td><p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false" >SET condition</a></p></td>
+                <td><p><a class="btn btn-primary" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false" >Search</a></p></td>
             </tr>
           </table>
         </div>
+
+        <div class="col" style="text-align:center; display:flex;justify-content: center">
+            <div class="card text-white bg-secondary mb-3" style="max-width: 22rem;">
+              <div class="card-body">
+                <p class="card-text"><?php echo $timeRange_data?></p>
+              </div>
+            </div>
+          </div>
 
         <div class="col" style="text-align:right;">
           <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="data range: <?php echo $timeRange_data?>">

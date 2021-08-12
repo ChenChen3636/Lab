@@ -16,6 +16,24 @@ import os
 import uuid
 import sys
 
+import requests
+
+
+def mac_parser(mac_addr):
+
+    oui_url = ("http://www.macvendorlookup.com/api/v2/" + mac_addr) 
+
+    try:
+        response_json = requests.get(oui_url).json()
+        #print("mac address:" + mac_addr + ", country: " + response_json[0]["country"] + ", company: " + response_json[0]["company"] + ", addressL3: " + response_json[0]["addressL3"])
+    except ValueError:
+        #print("not found...")
+        return "not found"
+
+    return response_json[0]["company"]
+
+
+
 
 
 def main():
@@ -63,7 +81,7 @@ def main():
     timeRange_str += " ~ "
     timeRange_str += time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(e_timeStamp))
     
-    #print("[{}] to [{}]".format(s_timeStamp, e_timeStamp))
+
     print("data range: [{}] to [{}]".format(s_timeStamp, e_timeStamp))
     
   else:
@@ -110,10 +128,6 @@ def main():
     except ValueError:
       record_conFK_list.append(conFK)
       
-      macA_node = Node("device_mac", mac_addr=macA)
-      macB_node = Node("device_mac", mac_addr=macB)
-      #cursor_rel = "{}-[:Connection_mac]->{}".format(macA,macB)
-      #cursor_rel = "source: \'{}\', target: \'{}\', type:'Connection_mac'".format(macA,macB)
       cursor_rel = json.dumps({"source": macA, "target": macB, "type": "Connection_mac"})
     
       #print(cursor_rel)
@@ -201,9 +215,9 @@ def main():
     if(total_link >= highlight_mark[0]):
 
       if(total_link >= highlight_mark[text_show_index]):
-        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "highlight": 1})
+        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "device_name": mac_parser(record_mac_list[i]), "highlight": 1})
       else:
-        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "highlight": 0})
+        node_json = json.dumps({"mac_addr": record_mac_list[i], "src_link_num": node_field_srcLinkNum[i], "des_link_num": node_field_desLinkNum[i], "device_name": mac_parser(record_mac_list[i]),"highlight": 0})
 
     else:
       deleNode_list.append(record_mac_list[i])

@@ -34,10 +34,7 @@
         }
 
         .nav-link.active {
-            background-color: wheat;
-        }
-        .g_link:active{
-            background-color: wheat;
+            text-decoration: underline;
         }
 
         .search {
@@ -63,3 +60,4 @@
             text-align: center;
             vertical-align: inherit;
         }
+

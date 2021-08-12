@@ -2,13 +2,14 @@
     date_default_timezone_set("Asia/Taipei");        //reset timezone
 
     $daterange_throughput = $_GET["daterange_throughput"];
+
+    $type = $_GET["type"];
 ;
 
     $daterangeAB = explode(" ~ ", $daterange_throughput);
 
 
     print("data processing...");
-
 
 
 
@@ -20,7 +21,10 @@
     //print $tsA."->".$tsB;
 
 
-    exec("python3 /var/www/html/graph_page/graph_driver/d3js_tcpThroughput.py y ".$tsA." ".$tsB, $result);
+    exec("python3 /var/www/html/graph_page/graph_driver/d3js_throughput.py y ".$tsA." ".$tsB." -type ".$type, $result);
+    //print("python3 /var/www/html/graph_page/graph_driver/d3js_throughput.py y ".$tsA." ".$tsB." -type ".$type);
+    
+    //print("python3 /var/www/html/graph_page/graph_driver/d3js_tcpThroughput.py y ".$tsA." ".$tsB." -type ".$type);
 
     //disable cache
     // HTTP/1.1  
@@ -30,5 +34,5 @@
     //header("Pragma: no-cache");
 
 
-    echo "<script>document.location.href='../graph_tcpThroughput.php?lastDate=$daterangeAB[0] ~ $daterangeAB[1]';</script>"
+   echo "<script>document.location.href='../graph_throughput.php?lastDate=$daterangeAB[0] ~ $daterangeAB[1]';</script>"
 ?>

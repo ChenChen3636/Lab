@@ -99,19 +99,23 @@
                         <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                             <label>&nbsp&nbsp&nbsp&nbsp</label>
                             <li class="nav-item">
-                                <a class="btn btn-warning  btn-sm"  href="graph_ip.php" target="graph_iframe" role="tab">ip</a>  
+                                <a class="btn btn-warning  btn-sm"  href="graph_ip.php" target="graph_iframe" role="tab">Source IP</a>  
                             </li>
                             <label>&nbsp&nbsp&nbsp&nbsp</label>
                             <li class="nav-item">
-                              <a class="btn btn-warning  btn-sm" href="graph_mac.php" target="graph_iframe" role="tab">mac</a>
+                                <a class="btn btn-warning  btn-sm"  href="graph_ip2.php" target="graph_iframe" role="tab">Destination IP</a>  
                             </li>
                             <label>&nbsp&nbsp&nbsp&nbsp</label>
                             <li class="nav-item">
-                              <a class="btn btn-warning  btn-sm" href="graph_conPktDelay.php" target="graph_iframe" role="tab">conPkt_Delay</a>
+                              <a class="btn btn-warning  btn-sm" href="graph_mac.php" target="graph_iframe" role="tab">MAC</a>
                             </li>
                             <label>&nbsp&nbsp&nbsp&nbsp</label>
                             <li class="nav-item">
-                                <a class="btn btn-warning  btn-sm" href="graph_desPort.php" target="graph_iframe" role="tab">desPort</a>
+                              <a class="btn btn-warning  btn-sm" href="graph_conPktDelay.php" target="graph_iframe" role="tab">Latency</a> <!--conPkt_Delay-->
+                            </li>
+                            <label>&nbsp&nbsp&nbsp&nbsp</label>
+                            <li class="nav-item">
+                                <a class="btn btn-warning  btn-sm" href="graph_desPort.php" target="graph_iframe" role="tab">Service</a>  <!--desPort-->
                             </li>
                             <label>&nbsp&nbsp&nbsp&nbsp</label>
                             <li class="nav-item">
@@ -130,19 +134,23 @@
                             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                                 <label>&nbsp&nbsp&nbsp&nbsp</label>
                                 <li class="nav-item">
-                                    <a class="btn btn-warning  btn-sm"  href="graph_bubble_conNumDes.php" target="graph_iframe" role="tab">bubble</a>  
+                                    <a class="btn btn-warning  btn-sm"  href="graph_bubble_conNumDes.php" target="graph_iframe" role="tab">Destination connection</a> <!--bubble--> 
                                 </li>
                                 <label>&nbsp&nbsp&nbsp&nbsp</label>
                                 <li class="nav-item">
-                                  <a class="btn btn-warning  btn-sm" href="graph_calendar_conNum.php" target="graph_iframe" role="tab">calendar</a>
+                                  <a class="btn btn-warning  btn-sm" href="graph_calendar_conNum.php" target="graph_iframe" role="tab">Network traffic</a> <!--calendar-->
                                 </li>
                                 <label>&nbsp&nbsp&nbsp&nbsp</label>
                                 <li class="nav-item">
-                                  <a class="btn btn-warning  btn-sm" href="graph_protocol_hierarchy.php" target="graph_iframe" role="tab">protocol_hierarchy</a>
+                                  <a class="btn btn-warning  btn-sm" href="graph_protocol_hierarchy.php" target="graph_iframe" role="tab">Protocol hierarchy</a>
                                 </li>
                                 <label>&nbsp&nbsp&nbsp&nbsp</label>
                                 <li class="nav-item">
-                                    <a class="btn btn-warning  btn-sm" href="graph_tcpThroughput.php" target="graph_iframe" role="tab">tcp_throughput</a>
+                                    <a class="btn btn-warning  btn-sm" href="graph_throughput.php" target="graph_iframe" role="tab">Throughput</a>
+                                </li>
+                                <label>&nbsp&nbsp&nbsp&nbsp</label>
+                                <li class="nav-item">
+                                    <a class="btn btn-warning  btn-sm" href="graph_RTT.php" target="graph_iframe" role="tab">RTT</a>
                                 </li>
                             </ul>
                         </h5>

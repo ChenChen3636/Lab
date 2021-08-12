@@ -2,6 +2,24 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+
+
+$json_string = file_get_contents("./graph_driver/data/d3js_bubble_ipAB.json");
+$timeRange_ary = json_decode($json_string, true);
+
+
+$timeRange_data = "";
+
+foreach ($timeRange_ary as $key => $value)
+{
+    switch ( $key ) {
+        case 'dataTime' :
+          $timeRange_data = $value;
+            break;
+    }
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -22,6 +40,18 @@ header("Pragma: no-cache");
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
 
+    <style type="text/css">
+
+    .card-header {
+      padding: .3rem 1.0rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+    </style>
+
 </head>
 <body>
   
@@ -30,8 +60,16 @@ header("Pragma: no-cache");
     <div class="container-fluid">
       <div class="row">
         <div class="col">
-          <p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">SET condition</a></p>
+          <p><a class="btn btn-primary" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">Search</a></p>
         </div>
+
+        <div class="col" style="text-align:center; display:flex;justify-content: center">
+            <div class="card text-white bg-secondary mb-3" style="max-width: 22rem;">
+              <div class="card-body">
+                <p class="card-text"><?php echo $timeRange_data?></p>
+              </div>
+            </div>
+          </div>
 
         <div class="col" style="text-align:right;">
           <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Number of destination connection" data-html="true" data-content="Bubble: number of conncetion">

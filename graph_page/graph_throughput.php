@@ -2,6 +2,16 @@
 header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
 header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
+
+
+$fp = fopen("./graph_driver/data/d3js_throughput.csv", "r");
+
+while (($data = fgetcsv($fp, 1000, ",")) !== FALSE) {
+  $time_range = $data[3];
+  $type = $data[4];
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -37,6 +47,35 @@ header("Pragma: no-cache");
         shape-rendering: crispEdges;
     }
 
+
+    text {
+    font: 12px sans-serif;
+    }
+
+    rect.background {
+    fill: white;
+    }
+
+    .axis {
+    shape-rendering: crispEdges;
+    }
+
+    .axis path,
+    .axis line {
+    fill: none;
+    stroke: #000;
+    }
+
+
+    .card-header {
+      padding: .3rem 1.0rem;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+
     </style>
 
 </head>
@@ -49,13 +88,22 @@ header("Pragma: no-cache");
         <div class="col">
           <table>
             <tr>
-                <td><p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false" >SET condition</a></p></td>
+                <td><p><a class="btn btn-primary" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">Search</a></p></td>
             </tr>
           </table>
         </div>
 
+        <div class="col" style="text-align:center; display:flex;justify-content: center">
+            <div class="card text-white bg-secondary mb-3" style="max-width: 22rem;">
+              <div class="card-header" style="font-size:16px;"><?php echo $type?></div>
+              <div class="card-body">
+                <p class="card-text" style="font-size:16px;"><?php echo $time_range?></p>
+              </div>
+            </div>
+          </div>
+
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Protocol hierarchy" data-html="true" data-content="data range: <?php echo $_GET["lastDate"]?>">
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="Throughput" data-html="true" data-content="Network throughput">
             <label></label>
           </button>
         </div>
@@ -66,11 +114,26 @@ header("Pragma: no-cache");
     <div class="collapse" id="set_condition">
       <div class="card card-body">
 
-        <form action="./graph_driver/dataFilter_tcpThroughput.php" method="GET">
+        <form action="./graph_driver/dataFilter_throughput.php" method="GET">
 
           <div class="form-group">
             <h5><label for="data_time_range">Time range</label></h5>
             <input type="text" class="form-control" name="daterange_throughput"  value= "<?php echo $_GET["lastDate"]?>">
+          </div>
+
+          <div class="form-group">
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="type" id="flexRadioDefault1" value="tcp">
+              <h5><label class="form-check-label" for="flexRadioDefault1">TCP</label></h5>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="type" id="flexRadioDefault2" value="udp">
+              <h5><label class="form-check-label" for="flexRadioDefault2">UDP</label></h5>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="type" id="flexRadioDefault3" value="total" checked>
+              <h5><label class="form-check-label" for="flexRadioDefault3">Total</label></h5>
+            </div>
           </div>
 
           <table>
@@ -210,7 +273,7 @@ var svg = d3.select("body")
 
 
 // Get the data
-d3.csv("./graph_driver/data/d3js_TCPthroughput.csv", function(error, data) {
+d3.csv("./graph_driver/data/d3js_throughput.csv", function(error, data) {
     data.forEach(function(d) {
         d.date = parseDate(d.date);
         d.throughput = +d.throughput;

@@ -36,6 +36,20 @@ foreach ($timeRange_ary as $key => $value)
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+    <style type="text/css">
+
+      .card-header {
+        padding: .3rem 1.0rem;
+      }
+
+      .card-body {
+          padding: 0.5rem;
+      }
+
+    </style>
+
 </head>
 <body>  
   <div  style="border:10px rgba(255,255,255,0) solid; ">
@@ -43,11 +57,20 @@ foreach ($timeRange_ary as $key => $value)
     <div class="container-fluid">
       <div class="row">
         <div class="col">
-          <p><a class="btn btn-primary btn-sm" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">SET condition</a></p>
+          <p><a class="btn btn-primary" data-toggle="collapse" href="#set_condition" role="button" aria-expanded="false">Search</a></p>
         </div>
 
+        <div class="col" style="text-align:center; display:flex;justify-content: center">
+            <div class="card text-white bg-secondary mb-3" style="max-width: 22rem;">
+              <div class="card-body">
+                <p class="card-text"><?php echo $timeRange_data?></p>
+              </div>
+            </div>
+          </div>
+
+
         <div class="col" style="text-align:right;">
-          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="DNS query hostname" data-html="true" data-content="Node(bule): source ip address<br>Node(orange): server hostname<br>Link: number of connection<br><br>data range: <?php echo $timeRange_data?>">
+          <button type="button" class="btn btn-default" data-container="body" data-toggle="popover" data-placement="left" title="DNS query hostname" data-html="true" data-content="Node(bule): source ip address<br>Node(orange): server hostname<br>Link: number of connection">
             <label></label>
           </button>
         </div>
