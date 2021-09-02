@@ -36,7 +36,6 @@ foreach ($document as $index => $row) {
         $result[$curr_time] = $len;
     }
 }
-
 for($i=$curr_time;$i>0;$i-=300){
     if(array_key_exists($i,$result)){
         $result[$i] = ($result[$i]/1024)/300;
@@ -45,5 +44,5 @@ for($i=$curr_time;$i>0;$i-=300){
         break;
     }
 }
-// print_r($result);
+
 echo json_encode($result);

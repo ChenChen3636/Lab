@@ -95,7 +95,7 @@ require_once './session.php';
                 <div class="col-md-4">
                     <!-- 選擇connection or packet -->
                     <button id="conne" href="" target="" class="select pick_page btn active" value="connection">connection</button>
-                    <label for="">|</label>
+                    <label for=""></label>
                     <button id="pack" href="" target="" class="select pick_page btn " value="packet">packet</button>
                 </div>
                 <div class="col-md-4 align-self-center" style="display:flex;justify-content:center;align-items:center;">
@@ -110,17 +110,37 @@ require_once './session.php';
             <div class="col">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Home</a>
-                        <a class="nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Profile</a>
-                        <a class="nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Contact</a>
+                        <a class="nav-link active" id="tab-cflow" data-toggle="tab" href="#nav-cflow" role="tab" aria-controls="nav-cflow" aria-selected="true">連線數量</a>
+                        <a class="nav-link" id="tab-pflow" data-toggle="tab" href="#nav-pflow" role="tab" aria-controls="nav-pflow" aria-selected="false">封包流量</a>
+                        <a class="nav-link" id="tab-src-rank" data-toggle="tab" href="#nav-src-rank" role="tab" aria-controls="nav-src-rank" aria-selected="false">來源端連線排名</a>
+                        <a class="nav-link" id="tab-dest-rank" data-toggle="tab" href="#nav-dest-rank" role="tab" aria-controls="nav-dest-rank" aria-selected="false">目的端連線排名</a>
+                        <a class="nav-link" id="tab-error" data-toggle="tab" href="#nav-error" role="tab" aria-controls="nav-error" aria-selected="false">錯誤分析</a>
                     </div>
                 </nav>
+
                 <div class="tab-content" id="nav-tabContent">
-                    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                        <div id="chart-cflow" style="height:200px;width: 100%;"></div>
+                    <div class="tab-pane fade show active" id="nav-cflow" role="tabpanel" aria-labelledby="nav-cflow-tab">
+                        <div id="chart-cflow" style="height:200px;"></div>
                     </div>
-                    <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">...</div>
-                    <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">...</div>
+                    <div class="tab-pane fade" id="nav-pflow" role="tabpanel" aria-labelledby="nav-pflow-tab">
+                        <div id="chart-pflow" stpflow style="height:200px;"></div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-src-rank" role="tabpanel" aria-labelledby="nav-src-rank-tab">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div id="bar-rank" style="height:200px;width:30%"></div>
+                            <div id="chart-rank" style="height:200px;"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-dest-rank" role="tabpanel" aria-labelledby="nav-dest-rank-tab">
+                        <div style="display:flex;justify-content:space-between;">
+                            <div id="bar-dest-rank" style="height:200px;width:30%"></div>
+                            <div id="chart-dest-rank" style="height:200px;"></div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-error" role="tabpanel" aria-labelledby="nav-error-tab">
+                        <div id="chart-error" style="height:200px;width:30%" ></div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -282,13 +302,14 @@ require_once './session.php';
 </div>
 
 <!-- =========================================================================================================================================================== -->
+<!-- JS -->
 <!-- =========================================================================================================================================================== -->
 
 <script>
     // var start = moment().startOf('day').unix();
     // var end = moment().unix();
     var start = 1625241600;
-    var end = 1625275680;
+    var end = 1625243800;
     var data = [];
     var filter = {};
     var filter_connection = {};
@@ -363,8 +384,15 @@ require_once './session.php';
                 $("#loading").hide();
             }
         });
+    }
+    function chart_set(){
        chart(start, end);
-       line_chart();
+       packet_chart(start,end);
+       line_chart(start,end,"chart-rank","src");
+       line_chart(start,end,"chart-dest-rank","dest");
+       bar_rank(start,end,"bar-rank","src");
+       bar_rank(start,end,"bar-dest-rank","dest");
+       error_chart();
     }
 
     /** ------------------------------------------------------*
@@ -377,6 +405,7 @@ require_once './session.php';
         var Hours = [];
         var Minutes = [];
         var format = [];
+        var window_width;
         for (var i = 0; i < timestamp.length; i++) {
             newdate[i] = new Date(timestamp[i] * 1000);
             Month[i] = newdate[i].getMonth() + 1;
@@ -404,10 +433,9 @@ require_once './session.php';
     function chart(start, end) {
         $.ajax({
             type: 'POST',
-            url: 'echartTest.php',
+            url: 'chart-cflow.php',
             data: {
                 filter: filter_connection,
-                p_filter: filter_packet
             },
             dataType: "json",
             success: function(msg) {
@@ -428,11 +456,11 @@ require_once './session.php';
                         }
                     },
                     title: {
-                        y: 10,
+                        y: 0,
                         left: 'center',
-                        text: '連線數量趨勢圖',
+                        text: '連線數量(筆/五分鐘)',
                         textStyle: {
-                            fontSize: 15,
+                            fontSize: 20,
                             fontFamily: "MingLiU",
                         }
                     },
@@ -449,6 +477,12 @@ require_once './session.php';
                     yAxis: {
                         type: 'value',
                         boundaryGap: [0, '0%']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
                     },
                     series: [{
                         name: '連線量',
@@ -474,71 +508,284 @@ require_once './session.php';
             }
         });
     }
-    function line_chart(){
-        var chartDom = document.getElementById('chart-rank');
+    function packet_chart(start,end){
+        var chartDom = document.getElementById('chart-pflow');
+        var myChart = echarts.init(chartDom);
+        var option;
+
+        $.ajax({
+            type: 'POST',
+            url: 'chart-pflow.php',
+            data: {
+                filter: filter_packet,
+            },
+            dataType: "json",
+            success: function(msg) {
+
+                var date = Object.keys(msg);
+                var data = Object.values(msg);
+
+                date = timestamp_to_date(date);
+                option = {
+                    tooltip: {
+                        trigger: 'axis',
+                        position: function (pt) {
+                            return [pt[0], '0%'];
+                        }
+                    },
+                    title: {
+                        y: 0,
+                        left: 'center',
+                        textStyle: {
+                            fontSize: 20,
+                            fontFamily: "MingLiU"
+                        },
+                        text: '封包流量(bytes/sec)'
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: date
+                    },
+                    yAxis: {
+                        type: 'value',
+                        boundaryGap: [0, '0%']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    series: [
+                        {
+                            name: 'KBps',
+                            type: 'line',
+                            smooth: true,
+                            symbol: 'none',
+                            areaStyle: {},
+                            itemStyle: {
+                                color: '#8696a7'
+                            },
+                            areaStyle: {
+                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                    offset: 0,
+                                    color: '#9ca8b8'
+                                }, {
+                                    offset: 1,
+                                    color: '#8696a7'
+                                }])
+                            },
+                            data: data
+                        }
+                    ]
+                };
+                myChart.setOption(option);
+            }
+        });
+    }
+    function bar_rank(start,end,div_id,type){
+        if(type == "src"){
+            var t = "來源端"
+        }else if(type == "dest"){
+            var t = "目的端"
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'chart-bar-rank.php',
+            data: {
+                filter: filter_connection,
+                type: type
+            },
+            dataType: "json",
+            success: function(msg) {
+                var chartDom = document.getElementById(div_id);
+                var myChart = echarts.init(chartDom);
+                var option;
+                var data = msg.data;
+                var count = msg.count;
+                var others = msg.others;
+
+                option = {
+                    title: {
+                        text: t+'連線量排名',
+                        subtext: '標示前五名連線',
+                        left: 'left',
+                        y: 0,
+                        textStyle: {
+                            fontSize: 20,
+                            fontFamily: "MingLiU"
+                        },
+                    },
+                    tooltip: {
+                        trigger: 'item'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        padding: [60,0,0,10]
+                    },
+                    series: [
+                        {
+                            name: '連線IP',
+                            type: 'pie',
+                            radius: '80%',
+                            data: [
+                                {value: count[0], name: data[0]},
+                                {value: count[1], name: data[1]},
+                                {value: count[2], name: data[2]},
+                                {value: count[3], name: data[3]},
+                                {value: count[4], name: data[4]},
+                                {value: others, name: "others"}
+                            ],
+                            center: ['65%','55%'],
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                }
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '4%',
+                                bottom: '3%',
+                                containLabel: true
+                            },
+
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+            }
+        });
+    }
+    function line_chart(start,end,div_id,type){
+        var chartDom = document.getElementById(div_id);
+        var myChart = echarts.init(chartDom);
+        var option;
+        $.ajax({
+            type: 'POST',
+            url: 'chart-rank.php',
+            data: {
+                filter: filter_connection,
+                type: type
+            },
+            dataType: "json",
+            success: function(msg) {
+                $("#chart-load").hide();
+                var data = msg.data;
+                var x = Object.keys(msg.x);
+                x = timestamp_to_date(x);
+                var each0 = Object.values(msg.each_result[0]);
+                var each1 = Object.values(msg.each_result[1]);
+                var each2 = Object.values(msg.each_result[2]);
+                var each3 = Object.values(msg.each_result[3]);
+                var each4 = Object.values(msg.each_result[4]);
+                console.log(each1)
+                option = {
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        padding: 20,
+                        itemGap: 30,
+                        data: data
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: x
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: data[0],
+                            type: 'line',
+                            stack: '總量',
+                            data: each0
+                        },
+                        {
+                            name: data[1],
+                            type: 'line',
+                            stack: '總量',
+                            data: each1
+                        },
+                        {
+                            name: data[2],
+                            type: 'line',
+                            stack: '總量',
+                            data: each2
+                        },
+                        {
+                            name: data[3],
+                            type: 'line',
+                            stack: '總量',
+                            data: each3
+                        },
+                        {
+                            name: data[4],
+                            type: 'line',
+                            stack: '總量',
+                            data: each4
+                        }
+                    ]
+                };
+
+                myChart.setOption(option);
+            }
+        });
+    }
+
+    function error_chart(){
+        var chartDom = document.getElementById('chart-error');
         var myChart = echarts.init(chartDom);
         var option;
 
         option = {
-            title: {
-                text: '流量排名'
+            legend: {},
+            tooltip: {},
+            dataset: {
+                source: [
+                    // ['product', '2015', '2016', '2017'],
+                    // ['Matcha Latte', 43.3, 85.8, 93.7],
+                    // ['Milk Tea', 83.1, 73.4, 55.1],
+                    // ['Cheese Cocoa', 86.4, 65.2, 82.5],
+                    // ['Walnut Brownie', 72.4, 53.9, 39.1]
+                ]
             },
-            tooltip: {
-                trigger: 'axis'
-            },
-            legend: {
-                data: ['120.126.16.21', '163.25.110.1', '120.126.16.22', '192.168.16.0', '127.0.0.1']
-            },
+            xAxis: {type: 'category'},
+            yAxis: {},
             grid: {
                 left: '3%',
                 right: '4%',
                 bottom: '3%',
                 containLabel: true
             },
-            toolbox: {
-                feature: {
-                    saveAsImage: {}
-                }
-            },
-            xAxis: {
-                type: 'category',
-                boundaryGap: false,
-                data: ['7/3 00:00', '7/3 2:00', '7/3 4:00', '7/3 6:00', '7/3 8:00', '7/3 10:00', '7/3 12:00']
-            },
-            yAxis: {
-                type: 'value'
-            },
+
             series: [
-                {
-                    name: '120.126.16.21',
-                    type: 'line',
-                    stack: '总量',
-                    data: [120, 132, 101, 134, 90, 230, 210]
-                },
-                {
-                    name: '163.25.110.1',
-                    type: 'line',
-                    stack: '总量',
-                    data: [220, 182, 191, 234, 290, 330, 310]
-                },
-                {
-                    name: '120.126.16.22',
-                    type: 'line',
-                    stack: '总量',
-                    data: [150, 232, 201, 154, 190, 330, 410]
-                },
-                {
-                    name: '192.168.16.0',
-                    type: 'line',
-                    stack: '总量',
-                    data: [320, 332, 301, 334, 390, 330, 320]
-                },
-                {
-                    name: '127.0.0.1',
-                    type: 'line',
-                    stack: '总量',
-                    data: [820, 932, 901, 934, 1290, 1330, 1320]
-                }
+                {type: 'bar'},
+                {type: 'bar'},
+                {type: 'bar'}
             ]
         };
 
@@ -550,12 +797,21 @@ require_once './session.php';
      *
      ** ------------------------------------------------------*/
     $(function() {
+        var width = $(window).width();
+        $("#chart-cflow").width(width);
+        $("#chart-pflow").width(width);
+        $("#bar-rank").width(width*0.3);
+        $("#chart-rank").width(width*0.7);
+        $("#bar-dest-rank").width(width*0.3);
+        $("#chart-dest-rank").width(width*0.7);
+        $("#chart-error").width(width);
         pagination.init();
         $('[data-toggle="tooltip"]').tooltip()
         /** ------------------------------------------------------*
          * 網頁一讀取，先query預設資料
         /** ------------------------------------------------------*/
         data_query(type, filter);
+        chart_set();
         /** ------------------------------------------------------*
          * 選擇connection還是packet頁面
         /** ------------------------------------------------------*/
@@ -609,6 +865,7 @@ require_once './session.php';
             end = Date.parse(picker.endDate.format('YYYY-MM-DD HH:mm')) / 1000;
             reset_page();
             data_query(type, filter);
+            chart_set();
         });
         /** ------------------------------------------------------*
          * 選擇條件
@@ -625,6 +882,7 @@ require_once './session.php';
             });
             reset_page();
             data_query(type, filter);
+            chart_set();
         });
 
        /** ------------------------------------------------------*
@@ -685,7 +943,7 @@ require_once './session.php';
             });
         })
          /** ------------------------------------------------------*
-         * colume select
+         * column select
          ** ------------------------------------------------------*/
         $("input[type='checkbox']").on("click",function(){
             var colname = $(this).val();
