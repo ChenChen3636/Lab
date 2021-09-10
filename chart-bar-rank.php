@@ -30,7 +30,7 @@ $document_count = $collection->count($filter);
 if($type == "src"){
     foreach ($document as $index => $row) {
         $start_time = intval($row["Start_Time"]);
-        $srcIP = long2IP(intval($row["Source_IP"]));
+        $srcIP = long2ip(intval($row["Source_IP"]));
         $min = intval(date("i", $start_time));
         $min = $min - $min % 5;
         $curr_time = strtotime(date("Y/m/d H:", $start_time) . $min);
@@ -55,6 +55,15 @@ if($type == "src"){
             $result[$dstIP] = 1;
         }
     }
+}
+if(array_key_exists("0.0.0.0", $result)){
+    unset($result["0.0.0.0"]);
+}
+if(array_key_exists("224.0.0.252", $result)){
+    unset($result["224.0.0.252"]);
+}
+if(array_key_exists("224.0.0.251", $result)){
+    unset($result["224.0.0.251"]);
 }
 
 

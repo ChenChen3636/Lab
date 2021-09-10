@@ -30,6 +30,7 @@ if ($type == "connection") {
     $document_count = $collection->count($filter);
     foreach ($document as $index => $row) {
 
+
         $SourceIP = long2ip($row['Source_IP']);
         $DestinationIP = long2ip($row['Destination_IP']);
         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
@@ -49,8 +50,9 @@ if ($type == "connection") {
                         <td>' . $DestinationIP . '</td>
                         <td>' . $row['Source_Port'] . '</td>
                         <td>' . $row['Destination_Port'] . '</td>
-                        <td><i class="connectionToPacket" value = "'.$id.'" style="cursor:pointer;color:blue">' . $packet . '</i></td>
+                        <td><a class="connectionToPacket" value = "'.$id.'" style="cursor:pointer;color:blue">' . $packet . '</a></td>
                         <td>' . $color . '</td>
+                        <td class="col_score"></td>
                         <td class="Maximum_TimeInterval">' .$row["Maximum_TimeInterval"]. '</td>
                         <td class="Minimum_TimeInterval">' .$row["Minimum_TimeInterval"]. '</td>
                         <td class="Average_TimeInterval">' .$row["Average_TimeInterval"]. '</td>
@@ -60,10 +62,23 @@ if ($type == "connection") {
                         <td class="Minimum_B2Abytes">' .$row["Minimum_B2Abytes"]. '</td>
                         <td class="Maximum_bytes">' .$row["Maximum_bytes"]. '</td>
                         <td class="Minimum_bytes">' .$row["Minimum_bytes"]. '</td>
-                        <td class="Average_bytes">' .$row["Average_bytes"]. '</td>
+                        <td class="SYN">' .$row["SYN_count"]. '</td>
+                        <td class="FIN">' .$row["FIN_count"]. '</td>
+                        <td class="RST">' .$row["RST_count"]. '</td>
+                        <td class="PSH">' .$row["PSH_count"]. '</td>
+                        <td class="URG">' .$row["URG_count"]. '</td>
                         </tr>';
     }
-    echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id));
+
+    $collection_score = (new MongoDB\Client)->cgudb->connection_score_collection;
+    $document_score = $collection_score->find();
+    $score = [];
+    foreach($document_score as $index => $row){
+        $key = $row["Foreign_Key"];
+        $score[$key] = $row["Score"];
+    }
+
+    echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id, "score" => $score));
 /** ------------------------------------------------------*
  * packet db query
  ** ------------------------------------------------------*/
@@ -132,7 +147,7 @@ if ($type == "connection") {
         $str .=
             '<tr>
                 <th scope="col">No.</th>
-                <th scope="col">Length</th>
+                <th scope="col">Length(Byte)</th>
                 <th scope="col">Arrival Time</th>
                 <th scope="col">Relative Time</th>
                 <th scope="col">Protocol</th>

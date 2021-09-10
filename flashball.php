@@ -80,8 +80,8 @@ require_once './session.php';
                         <div class="col-md-8">
                             <nav class="nav">
                                 <a href="flashball.php"> <img src="./icon/ball.png" alt="home" class="logo"></a>
-                                <a class="nav-link active" href="#">Session</a>
-                                <a class="nav-link" href="./graph_page/index.html">Graph</a>
+                                <a class="nav-link active" href="#">主頁</a>
+                                <a class="nav-link" href="./graph_page/index.html">圖表分析</a>
                             </nav>
                         </div>
                         <div class="col-md-4">
@@ -94,9 +94,9 @@ require_once './session.php';
             <div class="row" style="background-color:cornsilk; box-shadow: 0px 10px 5px -8px #CCC">
                 <div class="col-md-4">
                     <!-- 選擇connection or packet -->
-                    <button id="conne" href="" target="" class="select pick_page btn active" value="connection">connection</button>
+                    <button id="conne" href="" target="" class="select pick_page btn active" value="connection">連線</button>
                     <label for=""></label>
-                    <button id="pack" href="" target="" class="select pick_page btn " value="packet">packet</button>
+                    <button id="pack" href="" target="" class="select pick_page btn " value="packet">封包</button>
                 </div>
                 <div class="col-md-4 align-self-center" style="display:flex;justify-content:center;align-items:center;">
                     <!--選擇時間範圍-->
@@ -114,7 +114,7 @@ require_once './session.php';
                         <a class="nav-link" id="tab-pflow" data-toggle="tab" href="#nav-pflow" role="tab" aria-controls="nav-pflow" aria-selected="false">封包流量</a>
                         <a class="nav-link" id="tab-src-rank" data-toggle="tab" href="#nav-src-rank" role="tab" aria-controls="nav-src-rank" aria-selected="false">來源端連線排名</a>
                         <a class="nav-link" id="tab-dest-rank" data-toggle="tab" href="#nav-dest-rank" role="tab" aria-controls="nav-dest-rank" aria-selected="false">目的端連線排名</a>
-                        <a class="nav-link" id="tab-error" data-toggle="tab" href="#nav-error" role="tab" aria-controls="nav-error" aria-selected="false">錯誤分析</a>
+                        <a class="nav-link" id="tab-error" data-toggle="tab" href="#nav-error" role="tab" aria-controls="nav-error" aria-selected="false">連線異常分析</a>
                     </div>
                 </nav>
 
@@ -151,12 +151,12 @@ require_once './session.php';
             </div>
             <div class="col" style="float:right;display:flex;justify-content:flex-end">
                 <div style="margin: 10px 10px 0px 10px">
-                    <label>result: </label>
+                    <label>共 </label>
                     <a id="total_page"></a>
-                    <label>pages</label>
+                    <label>頁</label>
                 </div>
                 <div id="resetPacket" style="display:none">
-                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="Reset packets" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#80a9d5">
+                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="回到所有連線的封包列表" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#80a9d5">
                                 <img src="./icon/recycle.png" alt="" style="height:25px;width25px;">
                             </button>
                 </div>
@@ -175,13 +175,18 @@ require_once './session.php';
                         <input type="checkbox" value="Maximum_bytes" class="dropdown-item"><p>Maximum_bytes</p>
                         <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
                         <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
+                        <input type="checkbox" value="SYN" class="dropdown-item"><p>SYN</p>
+                        <input type="checkbox" value="FIN" class="dropdown-item"><p>FIN</p>
+                        <input type="checkbox" value="RST" class="dropdown-item"><p>RST</p>
+                        <input type="checkbox" value="PSH" class="dropdown-item"><p>PSH</p>
+                        <input type="checkbox" value="URG" class="dropdown-item"><p>URG</p>
                     </div>
                     <!-- filter -->
                     <button type="button" class="btn"  data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f0b685">
                         <img src="./icon/loupe.png" alt="" style ="height:25px;width:25px">
                     </button>
                     <!-- download -->
-                    <button type="button" id="btn-download" class="btn" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f8d362" data-toggle="tooltip" data-placement="top" title="Download PCAP file" >
+                    <button type="button" id="btn-download" class="btn" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f8d362" data-toggle="tooltip" data-placement="top" title="下載PCAP檔" >
                         <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
@@ -202,26 +207,32 @@ require_once './session.php';
                 <table class="table table-hover" id="table_connection">
                     <thead>
                         <tr class="clickable-row">
-                            <th scope="col">NO.</th>
+                            <th scope="col">No.</th>
                             <th scope="col">Protocol</th>
-                            <th scope="col">Start Time</th>
-                            <th scope="col">Duration (s)</th>
-                            <th scope="col">Src. IP</th>
-                            <th scope="col">Dest. IP</th>
-                            <th scope="col">Src. Port</th>
-                            <th scope="col">Dest. Port</th>
-                            <th scope="col">Packet</th>
+                            <th scope="col">Start time</th>
+                            <th scope="col">duration(s)</th>
+                            <th scope="col">Source IP</th>
+                            <th scope="col">Destination IP</th>
+                            <th scope="col">Source Port</th>
+                            <th scope="col">Destination Port</th>
+                            <th scope="col">Packets</th>
                             <th scope="col">Error</th>
-                            <th scope="col" class = "Maximum_TimeInterval" >Maximum_TimeInterval</th>
-                            <th scope="col" class = "Minimum_TimeInterval">Minimum_TimeInterval</th>
-                            <th scope="col" class = "Average_TimeInterval">Average_TimeInterval</th>
-                            <th scope="col" class = "Maximum_A2Bbytes">Maximum_A2Bbytes</th>
-                            <th scope="col" class = "Maximum_B2Abytes">Maximum_B2Abytes</th>
-                            <th scope="col" class = "Minimum_A2Bbytes">Minimum_A2Bbytes</th>
-                            <th scope="col" class = "Minimum_B2Abytes">Minimum_B2Abytes</th>
-                            <th scope="col" class = "Maximum_bytes">Maximum_bytes</th>
-                            <th scope="col" class = "Minimum_bytes">Minimum_bytes</th>
-                            <th scope="col" class = "Average_bytes">Average_bytes</th>
+                            <th scope="col">Score</th>
+                            <th scope="col" class = "Maximum_TimeInterval" >Maximum TimeInterval</th>
+                            <th scope="col" class = "Minimum_TimeInterval">Minimum TimeInterval</th>
+                            <th scope="col" class = "Average_TimeInterval">Average TimeInterval</th>
+                            <th scope="col" class = "Maximum_A2Bbytes">Maximum A2Bbytes</th>
+                            <th scope="col" class = "Maximum_B2Abytes">Maximum B2Abytes</th>
+                            <th scope="col" class = "Minimum_A2Bbytes">Minimum A2Bbytes</th>
+                            <th scope="col" class = "Minimum_B2Abytes">Minimum B2Abytes</th>
+                            <th scope="col" class = "Maximum_bytes">Maximum bytes</th>
+                            <th scope="col" class = "Minimum_bytes">Minimum bytes</th>
+                            <th scope="col" class = "Average_bytes">Average bytes</th>
+                            <th scope="col" class = "SYN">SYN</th>
+                            <th scope="col" class = "FIN">FIN</th>
+                            <th scope="col" class = "RST">RST</th>
+                            <th scope="col" class = "PSH">PSH</th>
+                            <th scope="col" class = "URG">URG</th>
                             <!-- <th scope="col" class = ""></th> -->
                         </tr>
                     </thead>
@@ -236,15 +247,15 @@ require_once './session.php';
                     <table class="table table-hover" id="table_packet">
                         <thead>
                             <tr>
-                                <th scope="col">NO.</th>
+                                <th scope="col">No.</th>
                                 <th scope="col">Arrival Time</th>
                                 <th scope="col">Protocol</th>
-                                <th scope="col">Src. IP</th>
-                                <th scope="col">Dest. IP</th>
-                                <th scope="col">Src. MAC</th>
-                                <th scope="col">Dest.MAC</th>
-                                <th scope="col">Src Port</th>
-                                <th scope="col">Dest. Port</th>
+                                <th scope="col">Source IP</th>
+                                <th scope="col">Destination IP</th>
+                                <th scope="col">Source MAC</th>
+                                <th scope="col">Destination MAC</th>
+                                <th scope="col">Source Port</th>
+                                <th scope="col">Destination Port</th>
                                 <th scope="col">Error</th>
                             </tr>
                             </thead>
@@ -282,9 +293,28 @@ require_once './session.php';
             <div class="modal-body">
                 <input type="radio" value="connection" id="conn_box" name="pick" style="display: none;">
                 <input type="radio" value="packet" id="pkt_box" name="pick" style="display: none;">
-                <br>
-                <label for="protocol">protocol: </label>
-                <input type="text" name="Protocol" id="Connection_Type" placeholder="Protocol">
+                <div style="display:grid;grid-template-columns: repeat(5, 1fr)">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="ICMP" value="ICMP" style="width:20px;height:20px">
+                        <label class="form-check-label" for="ICMP">ICMP</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="ARP" value="ARP" style="width:20px;height:20px">
+                        <label class="form-check-label" for="ARP">ARP</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="TCP" value="TCP" style="width:20px;height:20px">
+                        <label class="form-check-label" for="inlineCheckbox1">TCP</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="UDP" value="UDP" style="width:20px;height:20px">
+                        <label class="form-check-label" for="UDP">UDP</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="HTTP" value="HTTP" style="width:20px;height:20px">
+                        <label class="form-check-label" for="HTTP">HTTP</label>
+                    </div>
+                </div>
                 <br>
                 <label for="srcIP">IP:</label>
                 <input type="text" name="Third_Layer-Source_IP" id="Source_IP" placeholder="Src IP">
@@ -308,8 +338,8 @@ require_once './session.php';
 <script>
     // var start = moment().startOf('day').unix();
     // var end = moment().unix();
-    var start = 1625241600;
-    var end = 1625243800;
+    var start = 1628438400;
+    var end = 1628488740;
     var data = [];
     var filter = {};
     var filter_connection = {};
@@ -373,7 +403,8 @@ require_once './session.php';
             },
             async: true,
             success: function(msg) {
-                console.log(msg);
+                //console.log(msg);
+                var score = msg.score;
                 $(`#tbody_${type}`).html(msg.data);
                 select_col();
                 $('[data-toggle="popover"]').popover()
@@ -381,6 +412,16 @@ require_once './session.php';
                 final_page(Math.ceil(limit.count/limit.end))
                 page_total(msg.count);
                 pagination.status(msg.count, limit.end);
+                if(type == "connection"){
+                    $("#tbody_connection>tr").each(function(index,element){
+                        // console.log(index,element);
+                        var col_id = $(element).attr("id");
+                        if(score.hasOwnProperty(col_id)){
+                            $(element).find(".col_score").html(score[col_id]);
+                            //console.log($(element).find(".col_score"));
+                        }
+                    })
+                }
                 $("#loading").hide();
             }
         });
@@ -439,8 +480,8 @@ require_once './session.php';
             },
             dataType: "json",
             success: function(msg) {
-                console.log(Object.keys(msg));
-                console.log(Object.values(msg));
+                // console.log(Object.keys(msg));
+                // console.log(Object.values(msg));
 
                 var myChart = echarts.init(document.getElementById('chart-cflow'));
                 var date = Object.keys(msg);
@@ -636,12 +677,12 @@ require_once './session.php';
                             type: 'pie',
                             radius: '80%',
                             data: [
-                                {value: count[0], name: data[0]},
-                                {value: count[1], name: data[1]},
-                                {value: count[2], name: data[2]},
-                                {value: count[3], name: data[3]},
-                                {value: count[4], name: data[4]},
-                                {value: others, name: "others"}
+                                {value: count[0], name: data[0],itemStyle:{color: '#DC143C'}},
+                                {value: count[1], name: data[1],itemStyle:{color: '#ffc107'}},
+                                {value: count[2], name: data[2],itemStyle:{color: '#9ACD32'}},
+                                {value: count[3], name: data[3],itemStyle:{color: '#4169E1'}},
+                                {value: count[4], name: data[4],itemStyle:{color: '#FFB6C1'}},
+                                {value: others, name: "others",itemStyle:{color: '#87CEEB'}}
                             ],
                             center: ['65%','55%'],
                             emphasis: {
@@ -688,7 +729,7 @@ require_once './session.php';
                 var each2 = Object.values(msg.each_result[2]);
                 var each3 = Object.values(msg.each_result[3]);
                 var each4 = Object.values(msg.each_result[4]);
-                console.log(each1)
+
                 option = {
                     tooltip: {
                         trigger: 'axis'
@@ -721,32 +762,33 @@ require_once './session.php';
                         {
                             name: data[0],
                             type: 'line',
-                            stack: '總量',
-                            data: each0
+                            data: each0,
+                            color: '#DC143C',
+                            width: 1.5
                         },
                         {
                             name: data[1],
                             type: 'line',
-                            stack: '總量',
-                            data: each1
+                            data: each1,
+                            color: '#ffc107'
                         },
                         {
                             name: data[2],
                             type: 'line',
-                            stack: '總量',
-                            data: each2
+                            data: each2,
+                            color: '#9ACD32'
                         },
                         {
                             name: data[3],
                             type: 'line',
-                            stack: '總量',
-                            data: each3
+                            data: each3,
+                            color: '#4169E1'
                         },
                         {
                             name: data[4],
                             type: 'line',
-                            stack: '總量',
-                            data: each4
+                            data: each4,
+                            color: '#FFB6C1'
                         }
                     ]
                 };
@@ -762,30 +804,40 @@ require_once './session.php';
         var option;
 
         option = {
-            legend: {},
-            tooltip: {},
-            dataset: {
-                source: [
-                    // ['product', '2015', '2016', '2017'],
-                    // ['Matcha Latte', 43.3, 85.8, 93.7],
-                    // ['Milk Tea', 83.1, 73.4, 55.1],
-                    // ['Cheese Cocoa', 86.4, 65.2, 82.5],
-                    // ['Walnut Brownie', 72.4, 53.9, 39.1]
-                ]
+            title: {
+                left: 'center',
+                text: '連線異常分析統計圖',
+                subtext: '某時段異常分析',
+                textStyle: {
+                            fontSize: 20,
+                            fontFamily: "MingLiU"
+                        },
             },
-            xAxis: {type: 'category'},
-            yAxis: {},
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 left: '3%',
                 right: '4%',
                 bottom: '3%',
                 containLabel: true
             },
-
+            xAxis: {
+                boundaryGap: false
+            },
+            yAxis: {
+                type: 'category',
+                data: ['3way', '4way']
+            },
             series: [
-                {type: 'bar'},
-                {type: 'bar'},
-                {type: 'bar'}
+                {
+                    type: 'bar',
+                    data: [18203,23489],
+                    color: '#deaf68'
+                },
             ]
         };
 
@@ -874,6 +926,12 @@ require_once './session.php';
             filter = {};
             filter_connection = {};
             filter_packet = {};
+            $(this).parent().prev().children().children().children("input[type='checkbox']").each(function() {
+                if($(this).prop('checked')){
+                    filter_connection["Connection_Type"] = $(this).val();
+                    filter_packet["Protocol"] = $(this).val();
+                }
+            });
             $(this).parent().prev().children("input[type=text]").each(function() {
                 if ($(this).val() != "") {
                     filter_connection[$(this).attr("id")] = $(this).val();
@@ -894,7 +952,7 @@ require_once './session.php';
             if (classList.indexOf("disabled") == -1) {
                 var value = parseInt($(this).find(".page-link").attr("value"));
                 limit.skip = (value - 1) * limit.end;
-                console.log(value, limit.skip, limit.end);
+                // console.log(value, limit.skip, limit.end);
                 pagination.run($(this), limit.count, limit.end);
                 data_query(type, filter);
             }
@@ -915,7 +973,7 @@ require_once './session.php';
         /** ------------------------------------------------------*/
         $("#reset").on("click",function(){
             delete filter_packet["Foreign_Key"];
-            console.log(filter_packet);
+            // console.log(filter_packet);
             data_query(type,filter);
             $("#tbody_packet_detail").empty();
         })
@@ -937,7 +995,7 @@ require_once './session.php';
                 },
                 async: true,
                 success: function(msg) {
-                    console.log(msg);
+                    // console.log(msg);
                     $("#tbody_packet_detail").html(msg);
                 }
             });

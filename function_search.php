@@ -59,6 +59,10 @@ function protocol($str)
         case 1:
             $type = array("int" => 1, "str" => "ICMP");
             break;
+        case "HTTP":
+        case 80:
+            $type = array("int" => 80, "str" => "HTTP");
+            break;
     }
 
     return $type;

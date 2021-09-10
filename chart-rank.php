@@ -43,6 +43,16 @@ if($type == "src"){
         }
     }
 
+    if(array_key_exists("0.0.0.0", $result)){
+        unset($result["0.0.0.0"]);
+    }
+    if(array_key_exists("224.0.0.252", $result)){
+        unset($result["224.0.0.252"]);
+    }
+    if(array_key_exists("224.0.0.251", $result)){
+        unset($result["224.0.0.251"]);
+    }
+
     arsort($result);
     for($i=0;$i<5;$i++){
         array_push($host,array_keys($result)[$i]);
@@ -85,6 +95,17 @@ if($type == "src"){
             $result[$dstIP] = 1;
         }
     }
+
+    if(array_key_exists("0.0.0.0", $result)){
+        unset($result["0.0.0.0"]);
+    }
+    if(array_key_exists("224.0.0.252", $result)){
+        unset($result["224.0.0.252"]);
+    }
+    if(array_key_exists("224.0.0.251", $result)){
+        unset($result["224.0.0.251"]);
+    }
+
     arsort($result);
     for($i=0;$i<5;$i++){
         array_push($host,array_keys($result)[$i]);
