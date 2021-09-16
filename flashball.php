@@ -8,7 +8,7 @@ require_once './session.php';
 <html lang="en">
 
 <head>
-    <link rel="icon" href="./icon/ball.ico">
+    <link rel="icon" href="./icon/flash.ico">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,57 +31,18 @@ require_once './session.php';
 
     <link rel="stylesheet" href="./css/flash.css">
     <title>flashball</title>
-
-    <style>
-        #test {
-            height: 100px;
-            width: 100%;
-        }
-
-        #main_div {
-            width: 100%;
-            overflow: auto;
-            height: calc(100vh - 420px);
-        }
-        .hide {
-            display: none;
-        }
-        .dropdown-menu>label {
-            display:block;
-            margin:0;
-            line-height:10px;
-            left: 10px;
-        }
-        [type="checkbox"] {
-            position: relative;
-            top: 13px;
-            left:-85px;
-            cursor: pointer;
-        }
-        .dropdown-menu>p {
-            margin:-8px 10px 0 30px;
-        }
-        .dropdown-menu.show{
-            height:300px;
-            overflow:auto;
-        }
-        .invalid{
-            cursor: not-allowed;
-        }
-    </style>
-
 </head>
 <body>
     <div class="container-fluid">
-        <div style="position: relative; z-index:2; width: 100%;">
+        <div style="position: relative; z-index:2; width: 100%;height:100px">
             <div class="row">
                 <div class="col-md-12">
                     <div class="row navbar">
                         <div class="col-md-8">
                             <nav class="nav">
-                                <a href="flashball.php"> <img src="./icon/ball.png" alt="home" class="logo"></a>
-                                <a class="nav-link active" href="#">主頁</a>
-                                <a class="nav-link" href="./graph_page/index.html">圖表分析</a>
+                                <a href="flashball.php"> <img src="./icon/logo22.png" alt="home" class="logo"></a>
+                                <a class="nav-link active navtext" href="#">首頁</a>
+                                <a class="nav-link navtext" href="./graph_page/index.php">圖表分析</a>
                             </nav>
                         </div>
                         <div class="col-md-4">
@@ -107,14 +68,13 @@ require_once './session.php';
 
         <!-- 圖表背景 -->
         <div class="row">
-            <div class="col">
+            <div class="col" style="top:5px">
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
                         <a class="nav-link active" id="tab-cflow" data-toggle="tab" href="#nav-cflow" role="tab" aria-controls="nav-cflow" aria-selected="true">連線數量</a>
                         <a class="nav-link" id="tab-pflow" data-toggle="tab" href="#nav-pflow" role="tab" aria-controls="nav-pflow" aria-selected="false">封包流量</a>
                         <a class="nav-link" id="tab-src-rank" data-toggle="tab" href="#nav-src-rank" role="tab" aria-controls="nav-src-rank" aria-selected="false">來源端連線排名</a>
                         <a class="nav-link" id="tab-dest-rank" data-toggle="tab" href="#nav-dest-rank" role="tab" aria-controls="nav-dest-rank" aria-selected="false">目的端連線排名</a>
-                        <a class="nav-link" id="tab-error" data-toggle="tab" href="#nav-error" role="tab" aria-controls="nav-error" aria-selected="false">連線異常分析</a>
                     </div>
                 </nav>
 
@@ -137,14 +97,10 @@ require_once './session.php';
                             <div id="chart-dest-rank" style="height:200px;"></div>
                         </div>
                     </div>
-                    <div class="tab-pane fade" id="nav-error" role="tabpanel" aria-labelledby="nav-error-tab">
-                        <div id="chart-error" style="height:200px;width:30%" ></div>
-                    </div>
-
                 </div>
             </div>
         </div>
-        <div class="row" style="margin-top:10px">
+        <div class="row" style="margin-top:30px">
             <div class="col"></div>
             <div class="col align-self-center"  style="display:flex;justify-content:center;align-items:center;">
                 <?php require_once './pagination.php' ?>
@@ -208,6 +164,8 @@ require_once './session.php';
                     <thead>
                         <tr class="clickable-row">
                             <th scope="col">No.</th>
+                            <th scope="col">Error</th>
+                            <th scope="col">Score</th>
                             <th scope="col">Protocol</th>
                             <th scope="col">Start time</th>
                             <th scope="col">duration(s)</th>
@@ -216,8 +174,6 @@ require_once './session.php';
                             <th scope="col">Source Port</th>
                             <th scope="col">Destination Port</th>
                             <th scope="col">Packets</th>
-                            <th scope="col">Error</th>
-                            <th scope="col">Score</th>
                             <th scope="col" class = "Maximum_TimeInterval" >Maximum TimeInterval</th>
                             <th scope="col" class = "Minimum_TimeInterval">Minimum TimeInterval</th>
                             <th scope="col" class = "Average_TimeInterval">Average TimeInterval</th>
@@ -285,7 +241,7 @@ require_once './session.php';
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">搜尋</h5>
+                <h5 class="modal-title" id="exampleModalLongTitle">過濾條件</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -293,7 +249,9 @@ require_once './session.php';
             <div class="modal-body">
                 <input type="radio" value="connection" id="conn_box" name="pick" style="display: none;">
                 <input type="radio" value="packet" id="pkt_box" name="pick" style="display: none;">
-                <div style="display:grid;grid-template-columns: repeat(5, 1fr)">
+                <label for="">Protocol:</label>
+                <br>
+                <div style="display:grid;grid-template-columns: repeat(5, 1fr);">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="ICMP" value="ICMP" style="width:20px;height:20px">
                         <label class="form-check-label" for="ICMP">ICMP</label>
@@ -316,16 +274,20 @@ require_once './session.php';
                     </div>
                 </div>
                 <br>
-                <label for="srcIP">IP:</label>
-                <input type="text" name="Third_Layer-Source_IP" id="Source_IP" placeholder="Src IP">
-                <input type="text" name="Third_Layer-Destination_IP" id="Destination_IP" placeholder="Dst IP">
-                <br>
-                <label for="srcPort">Port: </label>
-                <input type="text" name="Fourth_Layer-Source_Port" id="Source_Port" placeholder="Src Port">
-                <input type="text" name="Fourth_Layer-Destination_Port" id="Destination_Port" placeholder="Dst Port">
+                <div style="display:grid;grid-template-columns: repeat(2, 1fr);row-gap:10px">
+                    <label for="srcIP">Source IP:</label>
+                    <input type="text" name="Third_Layer-Source_IP" id="Source_IP" placeholder="x.x.x.x">
+                    <label for="Destiantion_IP">Destination IP:</label>
+                    <input type="text" name="Third_Layer-Destination_IP" id="Destination_IP" placeholder="x.x.x.x">
+                    <label for="srcPort">Source Port: </label>
+                    <input type="text" name="Fourth_Layer-Source_Port" id="Source_Port" placeholder="">
+                    <label for="Destination_Port">Destination Port:</label>
+                    <input type="text" name="Fourth_Layer-Destination_Port" id="Destination_Port" placeholder="">
+                </div>
+
             </div>
             <div class="modal-footer">
-                <button id="btn_search" class="btn btn-secondary" data-dismiss="modal">search</button>
+                <button id="btn_search" class="btn btn-secondary" data-dismiss="modal">搜尋</button>
             </div>
         </div>
     </div>
@@ -339,7 +301,7 @@ require_once './session.php';
     // var start = moment().startOf('day').unix();
     // var end = moment().unix();
     var start = 1628438400;
-    var end = 1628488740;
+    var end = 1628485740;
     var data = [];
     var filter = {};
     var filter_connection = {};
@@ -433,7 +395,6 @@ require_once './session.php';
        line_chart(start,end,"chart-dest-rank","dest");
        bar_rank(start,end,"bar-rank","src");
        bar_rank(start,end,"bar-dest-rank","dest");
-       error_chart();
     }
 
     /** ------------------------------------------------------*
@@ -798,53 +759,6 @@ require_once './session.php';
         });
     }
 
-    function error_chart(){
-        var chartDom = document.getElementById('chart-error');
-        var myChart = echarts.init(chartDom);
-        var option;
-
-        option = {
-            title: {
-                left: 'center',
-                text: '連線異常分析統計圖',
-                subtext: '某時段異常分析',
-                textStyle: {
-                            fontSize: 20,
-                            fontFamily: "MingLiU"
-                        },
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '4%',
-                bottom: '3%',
-                containLabel: true
-            },
-            xAxis: {
-                boundaryGap: false
-            },
-            yAxis: {
-                type: 'category',
-                data: ['3way', '4way']
-            },
-            series: [
-                {
-                    type: 'bar',
-                    data: [18203,23489],
-                    color: '#deaf68'
-                },
-            ]
-        };
-
-        myChart.setOption(option);
-    }
-
-
     /** ------------------------------------------------------*
      *
      ** ------------------------------------------------------*/
@@ -856,7 +770,6 @@ require_once './session.php';
         $("#chart-rank").width(width*0.7);
         $("#bar-dest-rank").width(width*0.3);
         $("#chart-dest-rank").width(width*0.7);
-        $("#chart-error").width(width);
         pagination.init();
         $('[data-toggle="tooltip"]').tooltip()
         /** ------------------------------------------------------*

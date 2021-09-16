@@ -29,6 +29,42 @@ function converse_filter_type($filter)
     }
     return $filter;
 }
+function IP_convert($ip){
+    if(is_numeric($ip)){
+        $n_ip = long2ip($ip);
+    }elseif(is_string($ip)){
+        $n_ip = v6_convert($ip);
+    }
+    return $n_ip;
+}
+function v6_convert($v6){
+    $v6_split = [];
+    $n_v6 = "";
+    $v6_split = str_split($v6,4);
+    for($i=0;$i<count($v6_split);$i++){
+        if($v6_split[$i] == "0000"){
+            $v6_split[$i] = "0";
+        }else{
+            if(substr($v6_split[$i],0,3) === "000"){
+                $n = str_split($v6_split[$i],1);
+                $v6_split[$i] = $n[3];
+            }elseif(substr($v6_split[$i],0,2) === "00"){
+                $n = str_split($v6_split[$i],1);
+                $v6_split[$i] = $n[2].$n[3];
+            }elseif(substr($v6_split[$i],0,1) === "0"){
+                $n = str_split($v6_split[$i],1);
+                $v6_split[$i] = $n[1].$n[2].$n[3];
+            }
+        }
+        if($i == 0){
+            $n_v6 .= $v6_split[0];
+        }else{
+                $n_v6 .= ":";
+                $n_v6 .= $v6_split[$i];
+        }
+    }
+    return $n_v6;
+}
 function option()
 {
     $intList = ["limit", "skip"];
@@ -150,5 +186,55 @@ function showPktError($e)
         $a = "";
     }
 
+    return $a;
+}
+function show_pkt_error($e){
+    $err_msg = "";
+    foreach($e as $value){
+        //var_dump($value);
+        switch($value){
+            case 134217729:
+                $err_msg = "Zero Window";
+                break;
+            case 134221825:
+                $err_msg = "Zero Window Probe";
+                break;
+            case 134225921:
+                $err_msg = "Zero Window Probe Ack";
+                break;
+            case 136314881:
+                $err_msg = "RST";
+                break;
+            case 138412033:
+                $err_msg = "Segment not cap";
+                break;
+            case 140509185:
+                $err_msg = "Normal";
+                break;
+            case 140513281:
+                $err_msg = "Fast";
+                break;
+            case 140517377:
+                $err_msg = "Spurious";
+                break;
+            case 142606337:
+                $err_msg = "Dup";
+                break;
+            case 142703489:
+                $err_msg = "Out Of Order";
+                break;
+            case 146800641:
+                $err_msg = "Acked Unseen";
+                break;
+            default:
+                $err_msg = "";
+        }
+   }
+    if($err_msg == ""){
+        $a = "";
+    }else{
+        $a = '<button type="button" class="btn btn-lg btn-danger example-popover inline-flex items-center" data-html="true" data-placement="left" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="' . $err_msg . '" style="height:20px;"></button>';
+    }
+    // $a = '<button type="button" class="btn btn-lg btn-danger example-popover inline-flex items-center" data-html="true" data-placement="left" data-container="body" data-toggle="popover" data-trigger="focus" data-placement="top" data-content="' . $err_msg . '" style="height:20px;"></button>';
     return $a;
 }

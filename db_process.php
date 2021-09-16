@@ -30,9 +30,8 @@ if ($type == "connection") {
     $document_count = $collection->count($filter);
     foreach ($document as $index => $row) {
 
-
-        $SourceIP = long2ip($row['Source_IP']);
-        $DestinationIP = long2ip($row['Destination_IP']);
+        $SourceIP = IP_convert($row['Source_IP']);
+        $DestinationIP = IP_convert($row['Destination_IP']);
         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
         $id = $row['Foreign_Key'];
         $duration = floor($row["Connection_Duration"] * 1000) / 1000;
@@ -43,6 +42,8 @@ if ($type == "connection") {
 
         $str .= '<tr id=' . $id . '>
                         <td>' . ($index + 1 + $limit["skip"]) . '</td>
+                        <td>' . $color . '</td>
+                        <td class="col_score"></td>
                         <td>' . $connection_type . '</td>
                         <td>' . date("Y-m-d H:i:s", $row['Start_Time']) . '</td>
                         <td>' . $duration . '</td>
@@ -51,8 +52,6 @@ if ($type == "connection") {
                         <td>' . $row['Source_Port'] . '</td>
                         <td>' . $row['Destination_Port'] . '</td>
                         <td><a class="connectionToPacket" value = "'.$id.'" style="cursor:pointer;color:blue">' . $packet . '</a></td>
-                        <td>' . $color . '</td>
-                        <td class="col_score"></td>
                         <td class="Maximum_TimeInterval">' .$row["Maximum_TimeInterval"]. '</td>
                         <td class="Minimum_TimeInterval">' .$row["Minimum_TimeInterval"]. '</td>
                         <td class="Average_TimeInterval">' .$row["Average_TimeInterval"]. '</td>
@@ -92,8 +91,8 @@ if ($type == "connection") {
     $document_count = $collection->count($filter);
     foreach ($document as $index => $row) {
         $Pid = $row["_id"];
-        $SourceIP = long2ip($row['Third_Layer']['Source_IP']);
-        $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
+        $SourceIP = IP_convert($row['Third_Layer']['Source_IP']);
+        $DestinationIP = IP_convert($row['Third_Layer']['Destination_IP']);
         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
         $protocol = protocol($row["Protocol"])["str"];
         $error = [];
@@ -103,7 +102,7 @@ if ($type == "connection") {
         for ($i = 0; $i < 11; $i++) {
             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
         }
-        $show = showPktError($error);
+        $show = show_pkt_error($error);
         $num = ($index + 1 + $limit["skip"]);
 
         $str .= '<tr pid = "' . $Pid . '" num = "'.$num.'">
