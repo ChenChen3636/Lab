@@ -112,7 +112,7 @@ require_once './session.php';
                     <label>頁</label>
                 </div>
                 <div id="resetPacket" style="display:none">
-                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="回到所有連線的封包列表" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#80a9d5">
+                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="回到所有連線的封包列表" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#fcd321">
                                 <img src="./icon/recycle.png" alt="" style="height:25px;width25px;">
                             </button>
                 </div>
@@ -138,12 +138,8 @@ require_once './session.php';
                         <input type="checkbox" value="URG" class="dropdown-item"><p>URG</p>
                     </div>
                     <!-- filter -->
-                    <button type="button" class="btn"  data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f0b685">
+                    <button type="button" class="btn"  data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#80a9d5">
                         <img src="./icon/loupe.png" alt="" style ="height:25px;width:25px">
-                    </button>
-                    <!-- download -->
-                    <button type="button" id="btn-download" class="btn" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#f8d362" data-toggle="tooltip" data-placement="top" title="下載PCAP檔" >
-                        <img src="./icon/download.png" alt="" style="height:25px;width:25px";>
                     </button>
                 </div>
             </div>
@@ -163,6 +159,7 @@ require_once './session.php';
                 <table class="table table-hover" id="table_connection">
                     <thead>
                         <tr class="clickable-row">
+                            <th></th>
                             <th scope="col">No.</th>
                             <th scope="col">Error</th>
                             <th scope="col">Score</th>
@@ -198,8 +195,8 @@ require_once './session.php';
             </div>
 
             <!-- //-------------------- packet ----------------------// -->
-            <div id="session_packet" style="display: none;">
-                <div id="main_packet" style="height:400px;overflow:auto">
+            <div id="session_packet" style="display: none;" class="">
+                <div id="main_packet" style="height:calc(100vh - 450px);overflow:auto">
                     <table class="table table-hover" id="table_packet">
                         <thead>
                             <tr>
@@ -218,15 +215,14 @@ require_once './session.php';
                         <tbody id="tbody_packet">
                         </tbody>
                     </table>
-                 </div>
-
-                <div id="detail">
-                    <table class="table table-hover" id="packet_detal">
-                        <thead>
-                        </thead>
-                        <tbody id="tbody_packet_detail">
-                        </tbody>
-                    </table>
+                </div>
+                <div id="detail" style="overflow:auto;height:calc(100vh - 450px);display:none;">
+                    <div style="background:#f5c8a3;">
+                        <button type="button" id="detail-close" class="btn btn-light" style="float:right;margin-top:5px;margin-right:5px;">X</button>
+                        <h5 style="text-align:center;font-weight:bold;margin:0">Detail</h5>
+                        <p style="text-align:center;margin:0">(Select a packet on the list)</p>
+                    </div>
+                    <div id="tbody_packet_detail" style="display:grid;grid-template-columns:repeat(2,1fr);margin-top:10px;margin-left:10px"></div>
                 </div>
             </div>
 
@@ -240,13 +236,13 @@ require_once './session.php';
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLongTitle">過濾條件</h5>
+            <div class="modal-header modal-head-css">
+                <p class="modal-title" id="exampleModalLongTitle">過濾條件</p>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body modal-body-css">
                 <input type="radio" value="connection" id="conn_box" name="pick" style="display: none;">
                 <input type="radio" value="packet" id="pkt_box" name="pick" style="display: none;">
                 <label for="">Protocol:</label>
@@ -286,8 +282,8 @@ require_once './session.php';
                 </div>
 
             </div>
-            <div class="modal-footer">
-                <button id="btn_search" class="btn btn-secondary" data-dismiss="modal">搜尋</button>
+            <div class="modal-footer modal-foot-css">
+                <button id="btn_search" class="btn btn-secondary" data-dismiss="modal" style="width:100px;">搜尋</button>
             </div>
         </div>
     </div>
@@ -300,8 +296,8 @@ require_once './session.php';
 <script>
     // var start = moment().startOf('day').unix();
     // var end = moment().unix();
-    var start = 1628438400;
-    var end = 1628485740;
+    var start = 1631473200;
+    var end = 1631523540;
     var data = [];
     var filter = {};
     var filter_connection = {};
@@ -343,6 +339,22 @@ require_once './session.php';
         limit.skip = 0;
     }
     /** ------------------------------------------------------*
+     * 判斷score 的背景顏色
+     ** ------------------------------------------------------*/
+    function score_color($score){
+        $color = "";
+        if($score < 0){
+            $color = "badscore";
+        }else if($score>=0 && $score <=30){
+            $color = "middlescore";
+        }else if($score > 0){
+            $color = "okscore";
+        }else{
+            $color = "";
+        }
+        return $color;
+    }
+    /** ------------------------------------------------------*
      * query資料，丟目標位置跟條件
     /** ------------------------------------------------------*/
     function data_query(target, filter) {
@@ -366,6 +378,7 @@ require_once './session.php';
             async: true,
             success: function(msg) {
                 //console.log(msg);
+                $tdid = msg.Fkey;
                 var score = msg.score;
                 $(`#tbody_${type}`).html(msg.data);
                 select_col();
@@ -379,6 +392,8 @@ require_once './session.php';
                         // console.log(index,element);
                         var col_id = $(element).attr("id");
                         if(score.hasOwnProperty(col_id)){
+                            $bg_color = score_color(score[col_id]);
+                            $(element).find(".col_score").addClass($bg_color);
                             $(element).find(".col_score").html(score[col_id]);
                             //console.log($(element).find(".col_score"));
                         }
@@ -794,7 +809,7 @@ require_once './session.php';
                 $("#dropdownMenuButton").css("display","inline-block");
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
-                $("#session_packet").css("display", "block");
+                $("#session_packet").css("display", "grid");
                 $("#conne").removeClass("active")
                 $("#pack").addClass("active");
                 $("#resetPacket").css("display","inline-block");
@@ -813,8 +828,8 @@ require_once './session.php';
         $('#reportrange').daterangepicker({
             // startDate: moment().startOf('day'),
             // endDate: moment(),
-            startDate: 1625241600,
-            endDate: 1625275680,
+            startDate: 1631473200,
+            endDate: 1631523540,
             showDropdowns: true,
             timePicker: true,
             locale: {
@@ -896,6 +911,8 @@ require_once './session.php';
         $("#tbody_packet").on("click","tr",function(){
             var pid = $(this).attr("pid");
             var num = $(this).attr("num");
+            $("#session_packet").addClass("packet-list-wrapper");
+            $("#detail").css("display","block");
 
             $.ajax({
                 type: 'POST',
@@ -913,6 +930,10 @@ require_once './session.php';
                 }
             });
         })
+        $("#detail-close").on("click",function(){
+            $("#session_packet").removeClass("packet-list-wrapper");
+            $("#detail").css("display","none");
+        })
          /** ------------------------------------------------------*
          * column select
          ** ------------------------------------------------------*/
@@ -927,7 +948,9 @@ require_once './session.php';
         /** ------------------------------------------------------*
          * download click
          ** ------------------------------------------------------*/
-        $("#btn-download").on("click",function(){
+        $("tbody").on("click",".download-icon",function(){
+
+            var filename = $(this).attr("value");
 
             let reader  = new FileReader();
             function downloadFile(){
@@ -939,7 +962,7 @@ require_once './session.php';
                     let dom_a = document.createElement('a');
 
                     dom_a.href = url ;
-                    dom_a.download = "test.pcap" ;
+                    dom_a.download = filename + ".pcap" ;
 
                     document.getElementsByTagName('body')[0].appendChild(dom_a);
                     dom_a.click();
@@ -948,7 +971,7 @@ require_once './session.php';
             }
 
             function xhttp_request(url, callback){
-                var data = 'start='+start+"&end="+end;
+                var data = 'filename='+filename;
                 var xhttp  = new XMLHttpRequest();
                 xhttp.open("POST",url,true);
                 xhttp.responseType  = "arraybuffer" ;

@@ -41,6 +41,7 @@ if ($type == "connection") {
         $color = showError($row['Error_Code'][0], $row['Error_Code'][1]);
 
         $str .= '<tr id=' . $id . '>
+                        <td ><img src="./icon/download.png" value="'.$id.'" class="download-icon" style="width:20px;hight:20px"></td>
                         <td>' . ($index + 1 + $limit["skip"]) . '</td>
                         <td>' . $color . '</td>
                         <td class="col_score"></td>
@@ -129,8 +130,8 @@ if ($type == "connection") {
     $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
     $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
     foreach ($document as $index => $row) {
-        $SourceIP = long2ip($row['Third_Layer']['Source_IP']);
-        $DestinationIP = long2ip($row['Third_Layer']['Destination_IP']);
+        $SourceIP = IP_convert($row['Third_Layer']['Source_IP']);
+        $DestinationIP = IP_convert($row['Third_Layer']['Destination_IP']);
         $packet = $row['A2Bpacket'] + $row['B2Apacket'];
         $relative = floor($row["Relative_Time"] * 1000) / 1000;
         $sourceMac = port($row['Second_Layer']['Source_MAC']);
@@ -142,32 +143,98 @@ if ($type == "connection") {
             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
         }
         $show = showPktError($error);
+        if($type == "TCP"){
+            $version = $row["Third_Layer"]["Third_Layer_Option"]["Version"];
+            $nextHeader = $row["Third_Layer"]["Third_Layer_Option"]["Next_Header"];
+            $headerLen = $row["Third_Layer"]["Third_Layer_Option"]["Header_Len"];
+            $totalLen = $row["Third_Layer"]["Third_Layer_Option"]["Total_Length"];
+            $iden = $row["Third_Layer"]["Third_Layer_Option"]["Identification"];
+            $timeToLive = $row["Third_Layer"]["Third_Layer_Option"]["Time_To_Live"];
+            $sourcePort = $row["Fourth_Layer"]["Source_Port"];
+            $destinationPort = $row["Fourth_Layer"]["Destination_Port"];
+            $flag = $row["Fourth_Layer"]["Fourth_Layer_Option"]["Flags"];
+            $windowSize = $row["Fourth_Layer"]["Fourth_Layer_Option"]["Window_Size"];
+            $SequenceNumber = $row["Fourth_Layer"]["Fourth_Layer_Option"]["Sequence_Number"];
+            $AcknowledgeNumber = $row["Fourth_Layer"]["Fourth_Layer_Option"]["Acknowledge_Number"];
 
-        $str .=
-            '<tr>
-                <th scope="col">No.</th>
-                <th scope="col">Length(Byte)</th>
-                <th scope="col">Arrival Time</th>
-                <th scope="col">Relative Time</th>
-                <th scope="col">Protocol</th>
-                <th scope="col">Source MAC</th>
-                <th scope="col">Destination MAC</th>
-                <th scope="col">Source IP</th>
-                <th scope="col">Destination IP</th>
-                <th scope="col">Error</th>
-            </tr>
-            <tr>
-            <td>' . $num .'</td>
-            <td>' . $row['Len'] . '</td>
-            <td>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '</td>
-            <td>' . $relative . '</td>
-            <td>' . $type . '</td>
-            <td>' . $sourceMac . '</td>
-            <td>' . $destinationMac . '</td>
-            <td>' . $SourceIP . '</td>
-            <td>' . $DestinationIP . '</td>
-            <td>' . $show.'</td>
-            </tr>';
+            $str .=
+            '
+            <p style="font-weight:bold">No.' . $num .'</p><p></p>
+            <p style="font-weight:bold">Length:</p>' . $row['Len'] . '
+            <p style="font-weight:bold">Arrival Time: </p>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '
+            <p style="font-weight:bold">Relative Time: </p>' . $relative . '
+            <p style="font-weight:bold">Protocol: </p>' . $type . '
+            <p style="font-weight:bold;color:blue">[Second Layer]</p><p></p>
+            <p style="font-weight:bold">Sourece Mac: </p>' . $sourceMac . '
+            <p style="font-weight:bold">Destination Mac: </p>' . $destinationMac . '
+            <p style="font-weight:bold;color:blue">[Third Layer]</p><p></p>
+            <p style="font-weight:bold">Source IP: </p>' . $SourceIP . '
+            <p style="font-weight:bold">Destination IP: </p>' . $DestinationIP . '
+            <p style="font-weight:bold">Version: </p>' . $version . '
+            <p style="font-weight:bold">Next Header: </p>' . $nextHeader . '
+            <p style="font-weight:bold">Header Length: </p>' . $headerLen . '
+            <p style="font-weight:bold">Total Length: </p>' . $totalLen . '
+            <p style="font-weight:bold">Identificaion: </p>' . $iden . '
+            <p style="font-weight:bold">TTL: </p>' . $timeToLive. '
+            <p style="font-weight:bold;color:blue">[Four Layer]</p><p></p>
+            <p style="font-weight:bold">Source Port: </p>' . $sourcePort. '
+            <p style="font-weight:bold">Destination Port: </p>' . $destinationPort. '
+            <p style="font-weight:bold">Flag: </p>' . $flag. '
+            <p style="font-weight:bold">Window Size: </p>' . $windowSize. '
+            <p style="font-weight:bold">Sequence Number: </p>' . $SequenceNumber. '
+            <p style="font-weight:bold">Acknowledge Number: </p>' . $AcknowledgeNumber. '
+            <p style="font-weight:bold">Error: </p>' . $show;
+        }elseif($type == "UDP"){
+            $version = $row["Third_Layer"]["Third_Layer_Option"]["Version"];
+            $nextHeader = $row["Third_Layer"]["Third_Layer_Option"]["Next_Header"];
+            $headerLen = $row["Third_Layer"]["Third_Layer_Option"]["Header_Len"];
+            $totalLen = $row["Third_Layer"]["Third_Layer_Option"]["Total_Length"];
+            $iden = $row["Third_Layer"]["Third_Layer_Option"]["Identification"];
+            $timeToLive = $row["Third_Layer"]["Third_Layer_Option"]["Time_To_Live"];
+            $sourcePort = $row["Fourth_Layer"]["Source_Port"];
+            $destinationPort = $row["Fourth_Layer"]["Destination_Port"];
+
+            $str .=
+            '
+            <p style="font-weight:bold">No.' . $num .'</p><p></p>
+            <p style="font-weight:bold">Length:</p>' . $row['Len'] . '
+            <p style="font-weight:bold">Arrival Time: </p>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '
+            <p style="font-weight:bold">Relative Time: </p>' . $relative . '
+            <p style="font-weight:bold">Protocol: </p>' . $type . '
+            <p style="font-weight:bold;color:blue">[Second Layer]</p><p></p>
+            <p style="font-weight:bold">Sourece Mac: </p>' . $sourceMac . '
+            <p style="font-weight:bold">Destination Mac: </p>' . $destinationMac . '
+            <p style="font-weight:bold;color:blue">[Third Layer]</p><p></p>
+            <p style="font-weight:bold">Source IP: </p>' . $SourceIP . '
+            <p style="font-weight:bold">Destination IP: </p>' . $DestinationIP . '
+            <p style="font-weight:bold">Version: </p>' . $version . '
+            <p style="font-weight:bold">Next Header: </p>' . $nextHeader . '
+            <p style="font-weight:bold">Header Length: </p>' . $headerLen . '
+            <p style="font-weight:bold">Total Length: </p>' . $totalLen . '
+            <p style="font-weight:bold">Identificaion: </p>' . $iden . '
+            <p style="font-weight:bold">TTL: </p>' . $timeToLive. '
+            <p style="font-weight:bold;color:blue">[Four Layer]</p><p></p>
+            <p style="font-weight:bold">Source Port: </p>' . $sourcePort. '
+            <p style="font-weight:bold">Destination Port: </p>' . $destinationPort.'
+            <p style="font-weight:bold">Error: </p>' . $show;
+
+        }else{
+            $str .=
+            '
+            <p style="font-weight:bold">No.' . $num .'</p><p></p>
+            <p style="font-weight:bold">Length:</p>' . $row['Len'] . '
+            <p style="font-weight:bold">Arrival Time: </p>' . date("Y-m-d H:i", $ms[0]) . "." . $ms[1] . '
+            <p style="font-weight:bold">Relative Time: </p>' . $relative . '
+            <p style="font-weight:bold">Protocol: </p>' . $type . '
+            <p style="font-weight:bold;color:blue">[Second Layer]</p><p></p>
+            <p style="font-weight:bold">Sourece Mac: </p>' . $sourceMac . '
+            <p style="font-weight:bold">Destination Mac: </p>' . $destinationMac . '
+            <p style="font-weight:bold;color:blue">[Third Layer]</p><p></p>
+            <p style="font-weight:bold">Source IP: </p>' . $SourceIP . '
+            <p style="font-weight:bold">Destination IP: </p>' . $DestinationIP . '
+            <p style="font-weight:bold;color:blue">[Four Layer]</p><p></p>
+            <p style="font-weight:bold">Error: </p>' . $show;
+        }
     }
     echo json_encode($str);
 }

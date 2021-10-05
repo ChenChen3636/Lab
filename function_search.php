@@ -1,4 +1,4 @@
-<?php
+ <?php
 function converse_filter_type($filter)
 {
     $intList = ["Source_Port", "Source_IP", "Destination_IP", "Source_Port", "Destination_Port", "Third_Layer-Source_IP", "Third_Layer-Destination_IP", "Fourth_Layer-Source_Port", "Fourth_Layer-Destination_Port"];
@@ -58,13 +58,16 @@ function v6_convert($v6){
         }
         if($i == 0){
             $n_v6 .= $v6_split[0];
+        }elseif($v6_split[$i] == ""){
+            continue;
         }else{
-                $n_v6 .= ":";
-                $n_v6 .= $v6_split[$i];
+            $n_v6 .= ":";
+            $n_v6 .= $v6_split[$i];
         }
     }
     return $n_v6;
 }
+
 function option()
 {
     $intList = ["limit", "skip"];
