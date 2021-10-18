@@ -32,6 +32,7 @@ require_once './session.php';
     <link rel="stylesheet" href="./css/flash.css">
     <title>flashball</title>
 </head>
+
 <body>
     <div class="container-fluid">
         <div style="position: relative; z-index:2; width: 100%;height:100px">
@@ -102,46 +103,65 @@ require_once './session.php';
         </div>
         <div class="row" style="margin-top:30px">
             <div class="col"></div>
-            <div class="col align-self-center"  style="display:flex;justify-content:center;align-items:center;">
+            <div class="col align-self-center" style="display:flex;justify-content:center;align-items:center;">
                 <?php require_once './pagination.php' ?>
             </div>
-            <div class="col" style="float:right;display:flex;justify-content:flex-end">
+            <div class="col" style="display:flex;justify-content:flex-end">
                 <div style="margin: 10px 10px 0px 10px">
                     <label>共 </label>
                     <a id="total_page"></a>
                     <label>頁</label>
                 </div>
                 <div id="resetPacket" style="display:none">
-                            <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="回到所有連線的封包列表" style="height:40px;width:40pxvertical-align:middle;padding:0px 10px 0px 8px;margin-right:5px;background-color:#fcd321">
-                                <img src="./icon/recycle.png" alt="" style="height:25px;width25px;">
-                            </button>
+                    <button id="reset" class="btn" data-toggle="tooltip" data-placement="top" title="回到所有連線的封包列表" style="height:40px;width:60px;vertical-align:middle;padding:0px 10px 0px 8px;margin:0 10px;background-color:#fcd321">
+                        <img src="./icon/recycle.png" alt="" style="height:25px;width:25px;">
+                    </button>
                 </div>
                 <!-- 欄位選項 -->
-                <div class="dropdown-check-list" >
-                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:40px;background-color:#68ae78">
+                <div class="dropdown-check-list">
+                    <button class="btn dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height:40px;width:60px;margin:0 10px;background-color:#68ae78">
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item"><p>Maximum_TimeInterval</p>
-                        <input type="checkbox" value="Minimum_TimeInterval" class="dropdown-item"><p>Minimum_TimeInterval</p>
-                        <input type="checkbox" value="Average_TimeInterval" class="dropdown-item"><p>Average_TimeInterval</p>
-                        <input type="checkbox" value="Maximum_A2Bbytes" class="dropdown-item"><p>Maximum_A2Bbytes</p>
-                        <input type="checkbox" value="Maximum_B2Abytes" class="dropdown-item"><p>Maximum_B2Abytes</p>
-                        <input type="checkbox" value="Minimum_A2Bbytes" class="dropdown-item"><p>Minimum_A2Bbytes</p>
-                        <input type="checkbox" value="Minimum_B2Abytes" class="dropdown-item"><p>Minimum_B2Abytes</p>
-                        <input type="checkbox" value="Maximum_bytes" class="dropdown-item"><p>Maximum_bytes</p>
-                        <input type="checkbox" value="Minimum_bytes" class="dropdown-item"><p>Minimum_bytes</p>
-                        <input type="checkbox" value="Average_bytes" class="dropdown-item"><p>Average_bytes</p>
-                        <input type="checkbox" value="SYN" class="dropdown-item"><p>SYN</p>
-                        <input type="checkbox" value="FIN" class="dropdown-item"><p>FIN</p>
-                        <input type="checkbox" value="RST" class="dropdown-item"><p>RST</p>
-                        <input type="checkbox" value="PSH" class="dropdown-item"><p>PSH</p>
-                        <input type="checkbox" value="URG" class="dropdown-item"><p>URG</p>
+                        <input type="checkbox" value="Maximum_TimeInterval" class="dropdown-item">
+                        <p>Maximum_TimeInterval</p>
+                        <input type="checkbox" value="Minimum_TimeInterval" class="dropdown-item">
+                        <p>Minimum_TimeInterval</p>
+                        <input type="checkbox" value="Average_TimeInterval" class="dropdown-item">
+                        <p>Average_TimeInterval</p>
+                        <input type="checkbox" value="Maximum_A2Bbytes" class="dropdown-item">
+                        <p>Maximum_A2Bbytes</p>
+                        <input type="checkbox" value="Maximum_B2Abytes" class="dropdown-item">
+                        <p>Maximum_B2Abytes</p>
+                        <input type="checkbox" value="Minimum_A2Bbytes" class="dropdown-item">
+                        <p>Minimum_A2Bbytes</p>
+                        <input type="checkbox" value="Minimum_B2Abytes" class="dropdown-item">
+                        <p>Minimum_B2Abytes</p>
+                        <input type="checkbox" value="Maximum_bytes" class="dropdown-item">
+                        <p>Maximum_bytes</p>
+                        <input type="checkbox" value="Minimum_bytes" class="dropdown-item">
+                        <p>Minimum_bytes</p>
+                        <input type="checkbox" value="Average_bytes" class="dropdown-item">
+                        <p>Average_bytes</p>
+                        <input type="checkbox" value="SYN" class="dropdown-item">
+                        <p>SYN</p>
+                        <input type="checkbox" value="FIN" class="dropdown-item">
+                        <p>FIN</p>
+                        <input type="checkbox" value="RST" class="dropdown-item">
+                        <p>RST</p>
+                        <input type="checkbox" value="PSH" class="dropdown-item">
+                        <p>PSH</p>
+                        <input type="checkbox" value="URG" class="dropdown-item">
+                        <p>URG</p>
                     </div>
                     <!-- filter -->
-                    <button type="button" class="btn"  data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:40px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#80a9d5">
-                        <img src="./icon/loupe.png" alt="" style ="height:25px;width:25px">
-                    </button>
                 </div>
+                <button type="button" class="btn" data-toggle="modal" data-target="#exampleModalCenter" style="height:40px;width:60px;margin:0 10px;vertical-align:middle;padding:0px 10px 0px 8px;background-color:#80a9d5">
+                    <img src="./icon/loupe.png" alt="" style="height:25px;width:25px">
+                </button>
+                <form method="post" enctype="multipart/form-data" action="upload.php">
+                    <input type="file" name="my_file" id="file" accept=".pcap">
+                    <input type="submit" value="Upload">
+                </form>
             </div>
         </div>
         <div class="d-flex justify-content-center">
@@ -171,21 +191,21 @@ require_once './session.php';
                             <th scope="col">Source Port</th>
                             <th scope="col">Destination Port</th>
                             <th scope="col">Packets</th>
-                            <th scope="col" class = "Maximum_TimeInterval" >Maximum TimeInterval</th>
-                            <th scope="col" class = "Minimum_TimeInterval">Minimum TimeInterval</th>
-                            <th scope="col" class = "Average_TimeInterval">Average TimeInterval</th>
-                            <th scope="col" class = "Maximum_A2Bbytes">Maximum A2Bbytes</th>
-                            <th scope="col" class = "Maximum_B2Abytes">Maximum B2Abytes</th>
-                            <th scope="col" class = "Minimum_A2Bbytes">Minimum A2Bbytes</th>
-                            <th scope="col" class = "Minimum_B2Abytes">Minimum B2Abytes</th>
-                            <th scope="col" class = "Maximum_bytes">Maximum bytes</th>
-                            <th scope="col" class = "Minimum_bytes">Minimum bytes</th>
-                            <th scope="col" class = "Average_bytes">Average bytes</th>
-                            <th scope="col" class = "SYN">SYN</th>
-                            <th scope="col" class = "FIN">FIN</th>
-                            <th scope="col" class = "RST">RST</th>
-                            <th scope="col" class = "PSH">PSH</th>
-                            <th scope="col" class = "URG">URG</th>
+                            <th scope="col" class="Maximum_TimeInterval">Maximum TimeInterval</th>
+                            <th scope="col" class="Minimum_TimeInterval">Minimum TimeInterval</th>
+                            <th scope="col" class="Average_TimeInterval">Average TimeInterval</th>
+                            <th scope="col" class="Maximum_A2Bbytes">Maximum A2Bbytes</th>
+                            <th scope="col" class="Maximum_B2Abytes">Maximum B2Abytes</th>
+                            <th scope="col" class="Minimum_A2Bbytes">Minimum A2Bbytes</th>
+                            <th scope="col" class="Minimum_B2Abytes">Minimum B2Abytes</th>
+                            <th scope="col" class="Maximum_bytes">Maximum bytes</th>
+                            <th scope="col" class="Minimum_bytes">Minimum bytes</th>
+                            <th scope="col" class="Average_bytes">Average bytes</th>
+                            <th scope="col" class="SYN">SYN</th>
+                            <th scope="col" class="FIN">FIN</th>
+                            <th scope="col" class="RST">RST</th>
+                            <th scope="col" class="PSH">PSH</th>
+                            <th scope="col" class="URG">URG</th>
                             <!-- <th scope="col" class = ""></th> -->
                         </tr>
                     </thead>
@@ -211,7 +231,7 @@ require_once './session.php';
                                 <th scope="col">Destination Port</th>
                                 <th scope="col">Error</th>
                             </tr>
-                            </thead>
+                        </thead>
                         <tbody id="tbody_packet">
                         </tbody>
                     </table>
@@ -302,9 +322,9 @@ require_once './session.php';
     var filter = {};
     var filter_connection = {};
     var filter_packet = {};
-    var page_status ={
-        "connection" : 1,
-        "packet" : 1
+    var page_status = {
+        "connection": 1,
+        "packet": 1
     }
     var type = $(".pick_page.active").attr("value");
     var limit = {
@@ -334,22 +354,22 @@ require_once './session.php';
     /** ------------------------------------------------------*
      * 歸零分頁
     /** ------------------------------------------------------*/
-    function reset_page(){
+    function reset_page() {
         pagination.init();
         limit.skip = 0;
     }
     /** ------------------------------------------------------*
      * 判斷score 的背景顏色
      ** ------------------------------------------------------*/
-    function score_color($score){
+    function score_color($score) {
         $color = "";
-        if($score < 0){
+        if ($score < 0) {
             $color = "badscore";
-        }else if($score>=0 && $score <=30){
+        } else if ($score >= 0 && $score <= 30) {
             $color = "middlescore";
-        }else if($score > 0){
+        } else if ($score > 0) {
             $color = "okscore";
-        }else{
+        } else {
             $color = "";
         }
         return $color;
@@ -384,14 +404,14 @@ require_once './session.php';
                 select_col();
                 $('[data-toggle="popover"]').popover()
                 limit.count = msg.count;
-                final_page(Math.ceil(limit.count/limit.end))
+                final_page(Math.ceil(limit.count / limit.end))
                 page_total(msg.count);
                 pagination.status(msg.count, limit.end);
-                if(type == "connection"){
-                    $("#tbody_connection>tr").each(function(index,element){
+                if (type == "connection") {
+                    $("#tbody_connection>tr").each(function(index, element) {
                         // console.log(index,element);
                         var col_id = $(element).attr("id");
-                        if(score.hasOwnProperty(col_id)){
+                        if (score.hasOwnProperty(col_id)) {
                             $bg_color = score_color(score[col_id]);
                             $(element).find(".col_score").addClass($bg_color);
                             $(element).find(".col_score").html(score[col_id]);
@@ -403,13 +423,14 @@ require_once './session.php';
             }
         });
     }
-    function chart_set(){
-       chart(start, end);
-       packet_chart(start,end);
-       line_chart(start,end,"chart-rank","src");
-       line_chart(start,end,"chart-dest-rank","dest");
-       bar_rank(start,end,"bar-rank","src");
-       bar_rank(start,end,"bar-dest-rank","dest");
+
+    function chart_set() {
+        chart(start, end);
+        packet_chart(start, end);
+        line_chart(start, end, "chart-rank", "src");
+        line_chart(start, end, "chart-dest-rank", "dest");
+        bar_rank(start, end, "bar-rank", "src");
+        bar_rank(start, end, "bar-dest-rank", "dest");
     }
 
     /** ------------------------------------------------------*
@@ -436,14 +457,14 @@ require_once './session.php';
     /** ------------------------------------------------------*
      * checkbox
      ** ------------------------------------------------------*/
-     function select_col(){
-         $("input[type='checkbox']").each(function(){
-             colname = $(this).val();
-             if(!$(this).prop("checked")){
+    function select_col() {
+        $("input[type='checkbox']").each(function() {
+            colname = $(this).val();
+            if (!$(this).prop("checked")) {
                 $(`.${colname}`).addClass("hide");
-             }
-         })
-     }
+            }
+        })
+    }
     /** ------------------------------------------------------*
      * echart function
     /** ------------------------------------------------------*/
@@ -525,7 +546,8 @@ require_once './session.php';
             }
         });
     }
-    function packet_chart(start,end){
+
+    function packet_chart(start, end) {
         var chartDom = document.getElementById('chart-pflow');
         var myChart = echarts.init(chartDom);
         var option;
@@ -546,7 +568,7 @@ require_once './session.php';
                 option = {
                     tooltip: {
                         trigger: 'axis',
-                        position: function (pt) {
+                        position: function(pt) {
                             return [pt[0], '0%'];
                         }
                     },
@@ -579,37 +601,36 @@ require_once './session.php';
                         bottom: '3%',
                         containLabel: true
                     },
-                    series: [
-                        {
-                            name: 'KBps',
-                            type: 'line',
-                            smooth: true,
-                            symbol: 'none',
-                            areaStyle: {},
-                            itemStyle: {
+                    series: [{
+                        name: 'KBps',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'none',
+                        areaStyle: {},
+                        itemStyle: {
+                            color: '#8696a7'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: '#9ca8b8'
+                            }, {
+                                offset: 1,
                                 color: '#8696a7'
-                            },
-                            areaStyle: {
-                                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                                    offset: 0,
-                                    color: '#9ca8b8'
-                                }, {
-                                    offset: 1,
-                                    color: '#8696a7'
-                                }])
-                            },
-                            data: data
-                        }
-                    ]
+                            }])
+                        },
+                        data: data
+                    }]
                 };
                 myChart.setOption(option);
             }
         });
     }
-    function bar_rank(start,end,div_id,type){
-        if(type == "src"){
+
+    function bar_rank(start, end, div_id, type) {
+        if (type == "src") {
             var t = "來源端"
-        }else if(type == "dest"){
+        } else if (type == "dest") {
             var t = "目的端"
         }
         $.ajax({
@@ -630,7 +651,7 @@ require_once './session.php';
 
                 option = {
                     title: {
-                        text: t+'連線量排名',
+                        text: t + '連線量排名',
                         subtext: '標示前五名連線',
                         left: 'left',
                         y: 0,
@@ -645,45 +666,79 @@ require_once './session.php';
                     legend: {
                         orient: 'vertical',
                         left: 'left',
-                        padding: [60,0,0,10]
+                        padding: [60, 0, 0, 10]
                     },
-                    series: [
-                        {
-                            name: '連線IP',
-                            type: 'pie',
-                            radius: '80%',
-                            data: [
-                                {value: count[0], name: data[0],itemStyle:{color: '#DC143C'}},
-                                {value: count[1], name: data[1],itemStyle:{color: '#ffc107'}},
-                                {value: count[2], name: data[2],itemStyle:{color: '#9ACD32'}},
-                                {value: count[3], name: data[3],itemStyle:{color: '#4169E1'}},
-                                {value: count[4], name: data[4],itemStyle:{color: '#FFB6C1'}},
-                                {value: others, name: "others",itemStyle:{color: '#87CEEB'}}
-                            ],
-                            center: ['65%','55%'],
-                            emphasis: {
+                    series: [{
+                        name: '連線IP',
+                        type: 'pie',
+                        radius: '80%',
+                        data: [{
+                                value: count[0],
+                                name: data[0],
                                 itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    color: '#DC143C'
                                 }
                             },
-                            grid: {
-                                left: '3%',
-                                right: '4%',
-                                bottom: '3%',
-                                containLabel: true
+                            {
+                                value: count[1],
+                                name: data[1],
+                                itemStyle: {
+                                    color: '#ffc107'
+                                }
                             },
+                            {
+                                value: count[2],
+                                name: data[2],
+                                itemStyle: {
+                                    color: '#9ACD32'
+                                }
+                            },
+                            {
+                                value: count[3],
+                                name: data[3],
+                                itemStyle: {
+                                    color: '#4169E1'
+                                }
+                            },
+                            {
+                                value: count[4],
+                                name: data[4],
+                                itemStyle: {
+                                    color: '#FFB6C1'
+                                }
+                            },
+                            {
+                                value: others,
+                                name: "others",
+                                itemStyle: {
+                                    color: '#87CEEB'
+                                }
+                            }
+                        ],
+                        center: ['65%', '55%'],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
 
-                        }
-                    ]
+                    }]
                 };
 
                 myChart.setOption(option);
             }
         });
     }
-    function line_chart(start,end,div_id,type){
+
+    function line_chart(start, end, div_id, type) {
         var chartDom = document.getElementById(div_id);
         var myChart = echarts.init(chartDom);
         var option;
@@ -734,8 +789,7 @@ require_once './session.php';
                     yAxis: {
                         type: 'value'
                     },
-                    series: [
-                        {
+                    series: [{
                             name: data[0],
                             type: 'line',
                             data: each0,
@@ -781,10 +835,10 @@ require_once './session.php';
         var width = $(window).width();
         $("#chart-cflow").width(width);
         $("#chart-pflow").width(width);
-        $("#bar-rank").width(width*0.3);
-        $("#chart-rank").width(width*0.7);
-        $("#bar-dest-rank").width(width*0.3);
-        $("#chart-dest-rank").width(width*0.7);
+        $("#bar-rank").width(width * 0.3);
+        $("#chart-rank").width(width * 0.7);
+        $("#bar-dest-rank").width(width * 0.3);
+        $("#chart-dest-rank").width(width * 0.7);
         pagination.init();
         $('[data-toggle="tooltip"]').tooltip()
         /** ------------------------------------------------------*
@@ -802,21 +856,21 @@ require_once './session.php';
                 $("#session_connection").css("display", "block");
                 $("#pack").removeClass("active");
                 $("#conne").addClass("active");
-                $("#resetPacket").css("display","none");
-                $("#midPage").find(".page-link").attr("value",page_status.connection);
+                $("#resetPacket").css("display", "none");
+                $("#midPage").find(".page-link").attr("value", page_status.connection);
                 limit.skip = (page_status.connection * limit.end);
-                pagination.run($("#midPage"),limit.count,limit.end);
-                $("#dropdownMenuButton").css("display","inline-block");
+                pagination.run($("#midPage"), limit.count, limit.end);
+                $("#dropdownMenuButton").css("display", "inline-block");
             } else if (id == "pack") {
                 $("#session_connection").css("display", "none");
                 $("#session_packet").css("display", "grid");
                 $("#conne").removeClass("active")
                 $("#pack").addClass("active");
-                $("#resetPacket").css("display","inline-block");
+                $("#resetPacket").css("display", "inline-block");
                 page_status.connection = $(".page-item.active>.page-link").attr("value");
                 limit.skip = 0;
                 pagination.init();
-                $("#dropdownMenuButton").css("display","none");
+                $("#dropdownMenuButton").css("display", "none");
             }
             type = $(".pick_page.active").attr("value");
 
@@ -855,7 +909,7 @@ require_once './session.php';
             filter_connection = {};
             filter_packet = {};
             $(this).parent().prev().children().children().children("input[type='checkbox']").each(function() {
-                if($(this).prop('checked')){
+                if ($(this).prop('checked')) {
                     filter_connection["Connection_Type"] = $(this).val();
                     filter_packet["Protocol"] = $(this).val();
                 }
@@ -871,9 +925,9 @@ require_once './session.php';
             chart_set();
         });
 
-       /** ------------------------------------------------------*
-        * 監控分頁
-       /** ------------------------------------------------------*/
+        /** ------------------------------------------------------*
+         * 監控分頁
+        /** ------------------------------------------------------*/
 
         $(".pagination").on("click", ".page-item", function() {
             var classList = $(this).attr("class").split(" ");
@@ -889,39 +943,39 @@ require_once './session.php';
         /** ------------------------------------------------------*
          * onnection連到packet
         /** ------------------------------------------------------*/
-        $("tbody").on("click",".connectionToPacket",function(){
+        $("tbody").on("click", ".connectionToPacket", function() {
             var fKey = $(this).attr("value");
             type = "packet";
             filter_packet["Foreign_Key"] = fKey;
-            data_query(type,filter);
+            data_query(type, filter);
             $("#pack").trigger("click");
         })
         /** ------------------------------------------------------*
          * 拿掉packet的foreign key 條件
         /** ------------------------------------------------------*/
-        $("#reset").on("click",function(){
+        $("#reset").on("click", function() {
             delete filter_packet["Foreign_Key"];
             // console.log(filter_packet);
-            data_query(type,filter);
+            data_query(type, filter);
             $("#tbody_packet_detail").empty();
         })
         /** ------------------------------------------------------*
          * packet的detail
         /** ------------------------------------------------------*/
-        $("#tbody_packet").on("click","tr",function(){
+        $("#tbody_packet").on("click", "tr", function() {
             var pid = $(this).attr("pid");
             var num = $(this).attr("num");
             $("#session_packet").addClass("packet-list-wrapper");
-            $("#detail").css("display","block");
+            $("#detail").css("display", "block");
 
             $.ajax({
                 type: 'POST',
                 url: 'db_process.php',
                 dataType: 'json',
                 data: {
-                    pid : pid,
-                    num : num,
-                    type : "PacketToDetail"
+                    pid: pid,
+                    num: num,
+                    type: "PacketToDetail"
                 },
                 async: true,
                 success: function(msg) {
@@ -930,39 +984,42 @@ require_once './session.php';
                 }
             });
         })
-        $("#detail-close").on("click",function(){
+        $("#detail-close").on("click", function() {
             $("#session_packet").removeClass("packet-list-wrapper");
-            $("#detail").css("display","none");
+            $("#detail").css("display", "none");
         })
-         /** ------------------------------------------------------*
+        /** ------------------------------------------------------*
          * column select
          ** ------------------------------------------------------*/
-        $("input[type='checkbox']").on("click",function(){
+        $("input[type='checkbox']").on("click", function() {
             var colname = $(this).val();
-            if($(this).prop("checked")){
+            if ($(this).prop("checked")) {
                 $(`.${colname}`).removeClass("hide");
-            }else{
+            } else {
                 $(`.${colname}`).addClass("hide");
             }
         })
         /** ------------------------------------------------------*
          * download click
          ** ------------------------------------------------------*/
-        $("tbody").on("click",".download-icon",function(){
+        $("tbody").on("click", ".download-icon", function() {
 
             var filename = $(this).attr("value");
 
-            let reader  = new FileReader();
-            function downloadFile(){
-                xhttp_request('download.php', function(response){
-                    var blob = new Blob([response], {type: "application/octet-stream"});
+            let reader = new FileReader();
+
+            function downloadFile() {
+                xhttp_request('download.php', function(response) {
+                    var blob = new Blob([response], {
+                        type: "application/octet-stream"
+                    });
                     reader.readAsArrayBuffer(blob);
 
                     let url = URL.createObjectURL(blob);
                     let dom_a = document.createElement('a');
 
-                    dom_a.href = url ;
-                    dom_a.download = filename + ".pcap" ;
+                    dom_a.href = url;
+                    dom_a.download = filename + ".pcap";
 
                     document.getElementsByTagName('body')[0].appendChild(dom_a);
                     dom_a.click();
@@ -970,14 +1027,14 @@ require_once './session.php';
                 });
             }
 
-            function xhttp_request(url, callback){
-                var data = 'filename='+filename;
-                var xhttp  = new XMLHttpRequest();
-                xhttp.open("POST",url,true);
-                xhttp.responseType  = "arraybuffer" ;
-                xhttp.setRequestHeader('Content-type',"application/x-www-form-urlencoded; charset=UTF-8");
-                xhttp.onload  = function(){
-                    if(this.status == 200 ){
+            function xhttp_request(url, callback) {
+                var data = 'filename=' + filename;
+                var xhttp = new XMLHttpRequest();
+                xhttp.open("POST", url, true);
+                xhttp.responseType = "arraybuffer";
+                xhttp.setRequestHeader('Content-type', "application/x-www-form-urlencoded; charset=UTF-8");
+                xhttp.onload = function() {
+                    if (this.status == 200) {
                         callback(this.response);
                     }
                 };
@@ -988,5 +1045,4 @@ require_once './session.php';
         });
 
     });
-
 </script>
