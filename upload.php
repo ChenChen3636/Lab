@@ -32,7 +32,16 @@ if ($_FILES['my_file']['error'] === UPLOAD_ERR_OK){
   $cp_command = "cp -Rf /PCAP_DB/Upload/* /PCAP_DB/user_upload/".$file_mkdir_path."/";
   shell_exec($cp_command);
 
-  header("Location: ./flashball.php");
+  $chmod = "chmod 777 /PCAP_DB/user_upload/".$file_mkdir_path;
+  shell_exec($chmod);
+
+  chdir("/PCAP_DB/user_upload/".$file_mkdir_path);
+  //getcwd();
+
+  $parse = "./parse_upload.sh ".$file_mkdir_path;
+  shell_exec($parse);
+
+  header("Location: ./flashball.php?collection=".$file_mkdir_path);
 }
 else {
   echo '錯誤代碼：' . $_FILES['my_file']['error'] . '<br/>';

@@ -3,6 +3,11 @@
 // error_reporting(E_ALL);
 session_start();
 require_once './session.php';
+if(isset($_GET["collection"])){
+    $collection_name = $_GET["collection"];
+}else{
+    $collection_name = "collection";
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -332,7 +337,8 @@ require_once './session.php';
         "skip": 0,
         "end": 200
     };
-
+    var collection_name = "<?php echo $collection_name?>";
+    console.log("kkk---",collection_name);
     /** ------------------------------------------------------*
      * get time
     /** ------------------------------------------------------*/
@@ -379,7 +385,6 @@ require_once './session.php';
     /** ------------------------------------------------------*/
     function data_query(target, filter) {
         $("#loading").show();
-        //select_col();
         if (target == "connection") {
             filter = filter_connection;
         } else if (target == "packet") {
@@ -393,7 +398,8 @@ require_once './session.php';
             data: {
                 filter: filter,
                 type: target,
-                limit: limit
+                limit: limit,
+                collection: collection_name
             },
             async: true,
             success: function(msg) {

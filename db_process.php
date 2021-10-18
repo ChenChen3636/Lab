@@ -14,6 +14,16 @@ $filter = converse_filter_type($filter);
 $option = [];
 $option["limit"] = intval($limit["end"]);
 $option["skip"] = intval($limit["skip"]);
+$collection_name = $_POST["collection"];
+if($collection_name = "collection"){
+    $connection_collection = "connection_collection";
+    $packet_collection = "packet_ary_collection";
+    $score_collection = "connection_score_collection";
+}else{
+    $connection_collection = "con_".$collection_name;
+    $packet_collection = "pkt_".$collection_name;
+    $score_collection = "score_".$colllection_name;
+}
 
 /** ------------------------------------------------------*
  * connection db query
@@ -21,7 +31,7 @@ $option["skip"] = intval($limit["skip"]);
 if ($type == "connection") {
     $filter["Start_Time"]['$gt'] = intval($filter["Start_Time"]['$gt']);
     $filter["Start_Time"]['$lt'] = intval($filter["Start_Time"]['$lt']);
-    $collection = (new MongoDB\Client)->cgudb->connection_collection;
+    $collection = (new MongoDB\Client)->cgudb->$connection_collection;
     if (!$collection) {
         echo "error";
     }
@@ -70,7 +80,7 @@ if ($type == "connection") {
                         </tr>';
     }
 
-    $collection_score = (new MongoDB\Client)->cgudb->connection_score_collection;
+    $collection_score = (new MongoDB\Client)->cgudb->$score_collection;
     $document_score = $collection_score->find();
     $score = [];
     foreach($document_score as $index => $row){
@@ -87,7 +97,7 @@ if ($type == "connection") {
     $filter["Arrival_Time"]['$lt'] = intval($filter["Arrival_Time"]['$lt']);
     $str = "";
     $detail_str = "";
-    $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
+    $collection = (new MongoDB\Client)->cgudb->$packet_collection;
     $document = $collection->find($filter, $option);
     $document_count = $collection->count($filter);
     foreach ($document as $index => $row) {
@@ -127,7 +137,7 @@ if ($type == "connection") {
     $id = $_POST["pid"];
     $num = $_POST["num"];
     $str = "";
-    $collection = (new MongoDB\Client)->cgudb->packet_ary_collection;
+    $collection = (new MongoDB\Client)->cgudb->$packet_collection;
     $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
     foreach ($document as $index => $row) {
         $SourceIP = IP_convert($row['Third_Layer']['Source_IP']);
