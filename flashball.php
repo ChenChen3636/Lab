@@ -981,7 +981,8 @@ if(isset($_GET["collection"])){
                 data: {
                     pid: pid,
                     num: num,
-                    type: "PacketToDetail"
+                    type: "PacketToDetail",
+                    collection: collection_name
                 },
                 async: true,
                 success: function(msg) {

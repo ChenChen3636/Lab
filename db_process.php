@@ -15,7 +15,11 @@ $option = [];
 $option["limit"] = intval($limit["end"]);
 $option["skip"] = intval($limit["skip"]);
 $collection_name = $_POST["collection"];
-if($collection_name = "collection"){
+$connection_collection = "connection_collection";
+$packet_collection = "packet_ary_collection";
+$score_collection = "connection_score_collection";
+
+if($collection_name == "collection" || $collection_name == ""){
     $connection_collection = "connection_collection";
     $packet_collection = "packet_ary_collection";
     $score_collection = "connection_score_collection";
@@ -137,8 +141,10 @@ if ($type == "connection") {
     $id = $_POST["pid"];
     $num = $_POST["num"];
     $str = "";
+
     $collection = (new MongoDB\Client)->cgudb->$packet_collection;
     $document = $collection->find(['_id' => new MongoDB\BSON\ObjectID($id)]);
+
     foreach ($document as $index => $row) {
         $SourceIP = IP_convert($row['Third_Layer']['Source_IP']);
         $DestinationIP = IP_convert($row['Third_Layer']['Destination_IP']);
@@ -153,6 +159,7 @@ if ($type == "connection") {
             $error[$i] = $row['Fourth_Layer']['Fourth_Layer_Option']['Err_Code'][$i];
         }
         $show = showPktError($error);
+
         if($type == "TCP"){
             $version = $row["Third_Layer"]["Third_Layer_Option"]["Version"];
             $nextHeader = $row["Third_Layer"]["Third_Layer_Option"]["Next_Header"];
