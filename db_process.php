@@ -26,8 +26,9 @@ if($collection_name == "collection" || $collection_name == ""){
 }else{
     $connection_collection = "con_".$collection_name;
     $packet_collection = "pkt_".$collection_name;
-    $score_collection = "score_".$colllection_name;
+    $score_collection = "score_".$collection_name;
 }
+//var_dump("con: ",$connection_collection,"pkt: ",$packet_collection,"score: ",$score_collection);
 
 /** ------------------------------------------------------*
  * connection db query
@@ -86,13 +87,23 @@ if ($type == "connection") {
 
     $collection_score = (new MongoDB\Client)->cgudb->$score_collection;
     $document_score = $collection_score->find();
+    $count_dis = $collection_score->count();
     $score = [];
+    $dis_normal = 0;
+    $dis_error = 0;
     foreach($document_score as $index => $row){
         $key = $row["Foreign_Key"];
         $score[$key] = $row["Score"];
+        $distance = $row["Distance"];
+
+        if($distance <= 1){
+            $dis_normal += 1;
+        }elseif($distance > 1){
+            $dis_error += 1;
+        }
     }
 
-    echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id, "score" => $score));
+    echo json_encode(array("data" => $str, "count" => $document_count, "Fkey" => $id, "score" => $score, "dis_normal" => $dis_normal, "dis_error" => $dis_error, "dis_total" => $count_dis,"score_key" => $key));
 /** ------------------------------------------------------*
  * packet db query
  ** ------------------------------------------------------*/

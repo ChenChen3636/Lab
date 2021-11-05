@@ -36,7 +36,7 @@ if ($_FILES['my_file']['error'] === UPLOAD_ERR_OK){
   shell_exec($chmod);
 
   chdir("/PCAP_DB/user_upload/".$file_mkdir_path);
-  //getcwd();
+  getcwd();
 
   $parse = "./parse_upload.sh ".$file_mkdir_path;
   shell_exec($parse);

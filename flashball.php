@@ -107,7 +107,14 @@ if(isset($_GET["collection"])){
             </div>
         </div>
         <div class="row" style="margin-top:30px">
-            <div class="col"></div>
+            <div class="col div-dis">
+                <div class="dis-box">
+                    <div class="dis-correct" data-toggle="tooltip" data-placement="top" title="normal">
+                        <p></p>
+                    </div>
+                    <div class="dis-error" data-toggle="tooltip" data-placement="top" title="abnormal"><p></p></div>
+                </div>
+            </div>
             <div class="col align-self-center" style="display:flex;justify-content:center;align-items:center;">
                 <?php require_once './pagination.php' ?>
             </div>
@@ -272,7 +279,7 @@ if(isset($_GET["collection"])){
                 <input type="radio" value="packet" id="pkt_box" name="pick" style="display: none;">
                 <label for="">Protocol:</label>
                 <br>
-                <div style="display:grid;grid-template-columns: repeat(5, 1fr);">
+                <div style="display:grid;grid-template-columns: repeat(4, 1fr);">
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="ICMP" value="ICMP" style="width:20px;height:20px">
                         <label class="form-check-label" for="ICMP">ICMP</label>
@@ -288,10 +295,6 @@ if(isset($_GET["collection"])){
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="checkbox" id="UDP" value="UDP" style="width:20px;height:20px">
                         <label class="form-check-label" for="UDP">UDP</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="HTTP" value="HTTP" style="width:20px;height:20px">
-                        <label class="form-check-label" for="HTTP">HTTP</label>
                     </div>
                 </div>
                 <br>
@@ -406,6 +409,8 @@ if(isset($_GET["collection"])){
                 //console.log(msg);
                 $tdid = msg.Fkey;
                 var score = msg.score;
+                var score_key = msg.score_key;
+                // console.log("score: ", score);
                 $(`#tbody_${type}`).html(msg.data);
                 select_col();
                 $('[data-toggle="popover"]').popover()
@@ -413,10 +418,34 @@ if(isset($_GET["collection"])){
                 final_page(Math.ceil(limit.count / limit.end))
                 page_total(msg.count);
                 pagination.status(msg.count, limit.end);
+
+                var dis_total = msg.dis_total;
+                var dis_normal = msg.dis_normal;
+                var dis_error = msg.dis_error;
+                var dis_normal_percent = Math.round((dis_normal/dis_total)*100);
+                var dis_error_percent = 100 - dis_normal_percent;
+                console.log("total:",dis_total,"nor:",dis_normal,"err:",dis_error,"nor_%:",dis_normal_percent);
+                if(dis_normal == 0 && dis_error == 0){
+                    $(".div-dis>.dis-box>.dis-correct").css("width","0%");
+                    $(".div-dis>.dis-box>.dis-error").css("width","0%");
+                    $(".div-dis>.dis-box>.dis-correct>p").html(dis_normal_percent+"%");
+                    $(".div-dis>.dis-box>.dis-error>p").html(dis_error_percent+"%");
+                }else{
+                    $(".div-dis>.dis-box>.dis-correct").css("width",dis_normal_percent+"%");
+                    $(".div-dis>.dis-box>.dis-error").css("width",dis_error_percent+"%");
+                    $(".div-dis>.dis-box>.dis-correct>p").html(dis_normal_percent+"%");
+                    $(".div-dis>.dis-box>.dis-error>p").html(dis_error_percent+"%");
+                }
+                if(dis_normal == 0 && dis_error > 0){
+                    $(".div-dis>.dis-box>.dis-error").css("border-radius","5px");
+                }else if(dis_normal > 0 && dis_error == 0){
+                    $(".div-dis>.dis-box>.dis-correct").css("border-radius","5px");
+                }
                 if (type == "connection") {
                     $("#tbody_connection>tr").each(function(index, element) {
                         // console.log(index,element);
                         var col_id = $(element).attr("id");
+                       // console.log(col_id);
                         if (score.hasOwnProperty(col_id)) {
                             $bg_color = score_color(score[col_id]);
                             $(element).find(".col_score").addClass($bg_color);
@@ -480,6 +509,7 @@ if(isset($_GET["collection"])){
             url: 'chart-cflow.php',
             data: {
                 filter: filter_connection,
+                collection: collection_name
             },
             dataType: "json",
             success: function(msg) {
@@ -563,6 +593,7 @@ if(isset($_GET["collection"])){
             url: 'chart-pflow.php',
             data: {
                 filter: filter_packet,
+                collection: collection_name
             },
             dataType: "json",
             success: function(msg) {
@@ -644,7 +675,8 @@ if(isset($_GET["collection"])){
             url: 'chart-bar-rank.php',
             data: {
                 filter: filter_connection,
-                type: type
+                type: type,
+                collection: collection_name
             },
             dataType: "json",
             success: function(msg) {
@@ -753,7 +785,8 @@ if(isset($_GET["collection"])){
             url: 'chart-rank.php',
             data: {
                 filter: filter_connection,
-                type: type
+                type: type,
+                collection: collection_name
             },
             dataType: "json",
             success: function(msg) {
